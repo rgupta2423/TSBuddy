@@ -15,6 +15,7 @@ import {
   getLeaveReport,
   getWorkModeEmployees,
 } from 'redux/homeSlice';
+import {sortArrayOfObjectsOnProperty} from 'utils/utils';
 
 const ON_LEAVE = 'On Leave';
 const ABSENT = 'Absent';
@@ -105,6 +106,15 @@ const DailyReports = ({navigation}) => {
           [ABSENT]: responseEmployees.absentEmployee,
         };
 
+        for (let key in employeeData) {
+          const sortedArr = sortArrayOfObjectsOnProperty(
+            employeeData[key],
+            'employeeFirstName',
+          );
+
+          employeeData[key] = sortedArr;
+        }
+
         setAllEmployees(employeeData);
       } catch (err) {
         // console.log('reportsErr:', err);
@@ -154,6 +164,15 @@ const DailyReports = ({navigation}) => {
           dismiss: finalLeaves.dismissedLeave,
           reject: finalLeaves.rejectedLeave,
         };
+
+        for (let key in responseLeaves) {
+          const sortedArr = sortArrayOfObjectsOnProperty(
+            responseLeaves[key],
+            'employeeFirstName',
+          );
+
+          responseLeaves[key] = sortedArr;
+        }
         setLeaves(responseLeaves);
       } catch (err) {
         // console.log('errorTodayLeaves:', err);

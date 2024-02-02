@@ -88,6 +88,7 @@ export const foodData = [
 export const firstFalf = 'First Half';
 export const secondHalf = 'Second Half';
 export const none = 'None';
+export const halfDayStr = 'Half Day';
 
 export const whatsappInstallationAlert =
   'Make sure WhatsApp is installed on your device.';

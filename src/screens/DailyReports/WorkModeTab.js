@@ -42,10 +42,13 @@ const WorkModeTabContent = ({
   const [startDatePickerVisible, setStartDatePickerVisible] = useState(false);
   const [endDatePickerVisible, setEndDatePickerVisible] = useState(false);
   const workModeRenderData = ({item}) => {
+    if (!item) {
+      return null;
+    }
     const employeeName = `${
-      item.employeeFirstName ? item.employeeFirstName + ' ' : ''
-    }${item.employeeMiddleName ? item.employeeMiddleName + ' ' : ''}${
-      item.employeeLastName ? item.employeeLastName : ''
+      item?.employeeFirstName ? item?.employeeFirstName + ' ' : ''
+    }${item?.employeeMiddleName ? item?.employeeMiddleName + ' ' : ''}${
+      item?.employeeLastName ? item.employeeLastName : ''
     }`;
 
     const managerName = `${
@@ -89,6 +92,8 @@ const WorkModeTabContent = ({
 
   useEffect(() => {
     const workModeDataCopy = [...workModeData];
+    // const workModeDataCopy = workModeData.slice(0, 160);
+
     const itemsEmployeePickerListCopy = [...itemsEmployeePickerList];
     const sortedArray = sortArrayOfObjectsOnProperty(
       workModeDataCopy,

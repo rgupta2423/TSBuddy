@@ -11,6 +11,8 @@ import {
   // TouchableWithoutFeedback,
   Platform,
   ActivityIndicator,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
 
 import {Colors} from 'colors/Colors';
@@ -27,6 +29,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 import {
   applyForWfhLeave,
+  getAllEmployeesForHR,
   getEmployeeShift,
   getEmployeesByLeaveApprover,
   getLeaveApprovers,
@@ -42,7 +45,10 @@ import {useDrawerStatus} from '@react-navigation/drawer';
 import ApprovedIcon from 'assets/newDashboardIcons/circle-check.svg';
 import RejectedIcon from 'assets/newDashboardIcons/ban.svg';
 // import PendingIcon from 'assets/newDashboardIcons/circle-minus.svg';
-import {empFullName, getUniqueArrayOfObjects} from 'utils/utils';
+import {
+  getUniqueArrayOfObjects,
+  sortArrayOfObjectsOnProperty,
+} from 'utils/utils';
 import CustomButton from 'navigation/CustomButton';
 
 const initialEndDate = {endDateStr: 'Select End Date'};
@@ -220,17 +226,48 @@ const ApplyWFH = ({navigation, fromApproverEnd}) => {
     if (fromApproverEnd) {
       (async () => {
         try {
+          // setLoading(true);
+          // const employeeData = await dispatch(
+          //   getEmployeesByLeaveApprover(token),
+          // );
+
+          // const finalResources = employeeData?.payload?.map(employee => {
+          //   const empName = empFullName(employee);
+
+          //   return {value: employee.employeeId, label: empName, employee};
+          // });
+
+          // setResourcePicks(finalResources);
+          const {role} = decoded;
+          const isHRManager = role.includes('HR Manager');
           setLoading(true);
           const employeeData = await dispatch(
-            getEmployeesByLeaveApprover(token),
+            isHRManager
+              ? getAllEmployeesForHR({token})
+              : getEmployeesByLeaveApprover(token),
           );
 
-          const finalResources = employeeData?.payload?.map(employee => {
-            const empName = empFullName(employee);
+          let finalResources;
+          if (isHRManager) {
+            finalResources = employeeData?.payload?.map(employee => {
+              const empName = employee.employee.split('/')[1].trim();
+              return {value: employee.employeeId, label: empName, employee};
+            });
+          } else {
+            finalResources = employeeData?.payload?.map(employee => {
+              const empName = `${
+                employee.firstName ? employee.firstName + ' ' : ''
+              }${employee.middleName ? employee.middleName + ' ' : ''}${
+                employee.lastName ? employee.lastName + ' ' : ''
+              }`;
 
-            return {value: employee.employeeId, label: empName, employee};
-          });
-
+              return {value: employee.employeeId, label: empName, employee};
+            });
+          }
+          finalResources = sortArrayOfObjectsOnProperty(
+            finalResources,
+            'label',
+          );
           setResourcePicks(finalResources);
           if (employeeData?.error) {
             ShowAlert({
@@ -617,7 +654,7 @@ const ApplyWFH = ({navigation, fromApproverEnd}) => {
   };
 
   return (
-    <View style={styles.mainContainer}>
+    <SafeAreaView style={styles.mainContainer}>
       <CustomHeader
         showDrawerMenu={fromApproverEnd ? false : true}
         title="Apply WFH"
@@ -626,10 +663,11 @@ const ApplyWFH = ({navigation, fromApproverEnd}) => {
         showHeaderRight={fromApproverEnd ? false : true}
       />
 
-      <View style={styles.contentContainer}>
+      <ScrollView
+        contentContainerStyle={styles.containerContentContainerStyle}
+        style={styles.contentContainer}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-          {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
           <View style={styles.secondView}>
             {fromApproverEnd ? (
               <View
@@ -639,6 +677,8 @@ const ApplyWFH = ({navigation, fromApproverEnd}) => {
                 ]}>
                 <Text style={styles.selectResourceText}>Employee: </Text>
                 <DropDownPicker
+                  listMode="SCROLLVIEW"
+                  zIndex={10000}
                   searchable={true}
                   searchPlaceholder="Search..."
                   placeholder={'Select'}
@@ -725,6 +765,7 @@ const ApplyWFH = ({navigation, fromApproverEnd}) => {
               </Text>
               <View style={styles.dropDownContainer}>
                 <DropDownPicker
+                  listMode="SCROLLVIEW"
                   open={open}
                   placeholder={
                     !fromApproverEnd
@@ -809,44 +850,47 @@ const ApplyWFH = ({navigation, fromApproverEnd}) => {
               </TouchableOpacity>
             </View>
           </View>
-          {/* </TouchableWithoutFeedback> */}
         </KeyboardAvoidingView>
-        {!fromApproverEnd || !!resourcePickedId ? (
-          <>
-            <View style={styles.appliedView}>
-              <Text style={styles.wfhHistoryText}>Work From Home History</Text>
-            </View>
-            <View style={styles.buttomView}>
-              {loadingWFHList || loading ? (
-                <View style={styles.WFHListLoaderContainer}>
-                  <ActivityIndicator color={Colors.grey} size="large" />
-                </View>
-              ) : wfhList.length > 0 ? (
-                <FlatList
-                  style={styles.flatlistStyle}
-                  showsVerticalScrollIndicator={false}
-                  data={wfhList}
-                  renderItem={({item}) =>
-                    renderListOfAppliedRequests({item, onDismissWFH})
-                  }
-                  keyExtractor={keyExtractor}
-                />
-              ) : (
-                <View style={styles.noWFHContainer}>
-                  <Text style={styles.noWFH}>You don't have any WFH.</Text>
-                </View>
-              )}
-            </View>
-          </>
-        ) : null}
-      </View>
+      </ScrollView>
+      {!fromApproverEnd || !!resourcePickedId ? (
+        <View style={styles.wfhHistoryContainer}>
+          <View style={styles.appliedView}>
+            <Text style={styles.wfhHistoryText}>Work From Home History</Text>
+          </View>
+          <View style={styles.buttomView}>
+            {loadingWFHList || loading ? (
+              <View style={styles.WFHListLoaderContainer}>
+                <ActivityIndicator color={Colors.grey} size="large" />
+              </View>
+            ) : wfhList.length > 0 ? (
+              <FlatList
+                style={styles.flatlistStyle}
+                showsVerticalScrollIndicator={false}
+                data={wfhList}
+                renderItem={({item}) =>
+                  renderListOfAppliedRequests({item, onDismissWFH})
+                }
+                keyExtractor={keyExtractor}
+              />
+            ) : (
+              // wfhList.map(wfh => {
+              //   return renderListOfAppliedRequests({item: wfh, onDismissWFH});
+              // })
+              <View style={styles.noWFHContainer}>
+                <Text style={styles.noWFH}>You don't have any WFH.</Text>
+              </View>
+            )}
+          </View>
+        </View>
+      ) : null}
+
       {loading ? (
         <View style={styles.loaderContainer}>
           <View style={styles.loaderBackground} />
           <ActivityIndicator size="large" />
         </View>
       ) : null}
-    </View>
+    </SafeAreaView>
   );
 };
 

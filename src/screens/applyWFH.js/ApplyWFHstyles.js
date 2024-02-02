@@ -5,7 +5,6 @@ import {
 } from 'utils/Responsive';
 import {Colors} from 'colors/Colors';
 import {FontFamily, FontSize} from 'constants/fonts';
-const windowHeight = Dimensions.get('window').height;
 export default StyleSheet.create({
   mainContainer: {
     backgroundColor: Colors.whitishBlue,
@@ -34,17 +33,18 @@ export default StyleSheet.create({
   leaveApproverSelect: {
     borderRadius: 4,
   },
+  containerContentContainerStyle: {},
   contentContainer: {
     flex: 1,
   },
   secondView: {
     backgroundColor: Colors.white,
     marginHorizontal: wp(4),
-    marginVertical: hp(2),
+    marginVertical: 5,
     paddingHorizontal: wp(2),
     paddingVertical: hp(2),
     borderRadius: 12,
-    marginBottom: hp(1),
+    flex: 0.4,
   },
   dropDownView: {
     paddingVertical: hp(1),
@@ -104,13 +104,11 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
   },
   buttomView: {
-    height: windowHeight >= 700 ? hp(35) : hp(28),
     marginBottom: 20,
     shadowOpacity: 0.1,
     marginHorizontal: wp(2),
     paddingHorizontal: wp(2),
     paddingVertical: hp(1),
-    flex: 1,
   },
   loaderContainer: {
     ...StyleSheet.absoluteFillObject,
@@ -152,6 +150,9 @@ export default StyleSheet.create({
     textAlign: 'center',
     fontSize: 17,
   },
+  wfhHistoryContainer: {
+    flex: 0.5,
+  },
   appliedView: {
     marginHorizontal: wp(4),
   },
@@ -171,7 +172,6 @@ export default StyleSheet.create({
   },
   flatlistStyle: {
     height: '100%',
-    flex: 1,
   },
   WFHListLoaderContainer: {
     flex: 1,

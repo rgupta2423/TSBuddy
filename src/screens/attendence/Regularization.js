@@ -1,14 +1,6 @@
 import React from 'react';
 import {Colors} from 'colors/Colors';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  Alert,
-  Pressable,
-} from 'react-native';
-import {widthPercentageToDP as wp} from 'utils/Responsive';
+import {View, Text, TouchableOpacity, Image, Alert} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import ModalDropdown from 'react-native-modal-dropdown';
 import {useEffect, useState} from 'react';
@@ -32,7 +24,6 @@ const Regularization = ({navigation, route}) => {
   const [regularizationReason, setRegularzitionReason] = useState([]);
   const [leaveApproversList, setLeaveApproversList] = useState([]);
   // console.log('leaveApproversList:', leaveApproversList);
-  const [selectDay, setSelectDay] = useState('');
   const [selectApprover, setSelectApprover] = useState('');
   const [selectReasons, setSelectReasons] = useState('');
   const [commentText, setCommentText] = useState('');

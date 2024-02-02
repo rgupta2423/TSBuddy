@@ -2263,7 +2263,6 @@ const homeSlice = createSlice({
       state.salarySlipData = [];
       state.salarySlipDataError = action.payload;
     });
-    // ====================getEmployeeShift ===================
     builder.addCase(getEmployeeShift.fulfilled, (state, action) => {
       state.employeeShift = action.payload;
       state.employeeShiftError = undefined;
@@ -2272,7 +2271,6 @@ const homeSlice = createSlice({
       state.employeeShift = [];
       state.employeeShiftError = action.payload;
     });
-    // ====================getEmployeeShift ===================
 
     builder.addCase(getEmployeeData.pending, state => {
       state.employeeDataLoading = true;

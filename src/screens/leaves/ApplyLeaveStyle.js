@@ -14,6 +14,9 @@ export default StyleSheet.create({
   mainBottomContainer: {
     flex: 1,
   },
+  mainContainerContentContainerStyle: {
+    flexGrow: 1,
+  },
   swiperContainer: {
     height: hp(16),
     justifyContent: 'center',
@@ -31,7 +34,7 @@ export default StyleSheet.create({
     marginVertical: 8,
     paddingHorizontal: 10,
     justifyContent: 'space-between',
-    zIndex: 99999,
+    // zIndex: 99999,
   },
   selectResourceText: {
     fontSize: FontSize.h17,
@@ -114,7 +117,7 @@ export default StyleSheet.create({
     borderWidth: 1,
     marginTop: 8,
     justifyContent: 'center',
-    zIndex: 1000,
+    zIndex: 999,
   },
   leaveApproverText: {
     fontWeight: 'bold',
@@ -315,6 +318,7 @@ export default StyleSheet.create({
 
   resourceSelectContainerStyle: {
     width: '50%',
+    // height: 150,
   },
   halfDayDropdownContainer: {
     zIndex: 9999,

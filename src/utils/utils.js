@@ -175,19 +175,13 @@ export function sortByFiscalYear(date1, date2) {
 }
 
 export const sortArrayOfObjectsOnProperty = (arr, property) => {
-  arr.sort((a, b) => {
-    const nameA = a[property]?.toUpperCase(); // Convert names to uppercase for case-insensitive sorting
-    const nameB = b[property]?.toUpperCase();
-
-    if (nameA < nameB) {
-      return -1;
-    }
-    if (nameA > nameB) {
-      return 1;
-    }
-    return 0;
-  });
-  console.log('arr:', arr);
+  arr.length &&
+    arr.sort((a, b) => {
+      if (!a || !b) {
+        return;
+      }
+      return a[property]?.localeCompare(b[property]);
+    });
 
   return arr;
 };

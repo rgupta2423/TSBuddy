@@ -13,6 +13,7 @@ import {
   View,
   ScrollView,
   SafeAreaView,
+  Platform,
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import ModalDropdown from 'react-native-modal-dropdown';
@@ -27,11 +28,13 @@ import {
   none,
   firstFalf,
   secondHalf,
+  halfDayStr,
 } from 'utils/defaultData';
 
 import {
   applyForLeave,
   applyForUpdateedLeave,
+  getAllEmployeesForHR,
   getEmployeesByLeaveApprover,
   getFinalizedLeaveDays,
   getLeaveApprovers,
@@ -44,7 +47,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import CustomHeader from 'navigation/CustomHeader';
 import ShowAlert from 'customComponents/CustomError';
 import {ERROR, LEAVE_APPROVER_FAIL_FETCH} from 'utils/string';
-import {getCurrentFiscalYear, getDaysBetweenDates} from 'utils/utils';
+import {
+  getCurrentFiscalYear,
+  getDaysBetweenDates,
+  sortArrayOfObjectsOnProperty,
+} from 'utils/utils';
 const months = [
   'Jan',
   'Feb',
@@ -83,6 +90,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
   const {isGuestLogin: isGuestLogin, userToken: token} = useSelector(
     state => state.auth,
   );
+
   const isHalfDay = route?.params?.halfDay;
 
   const {openLeavesCount} = route?.params || {};
@@ -132,7 +140,6 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
 
   const toDatestr = toDateObj.toLocaleDateString('en-US', dateOptions);
   const resourceHalfDay = route?.params?.halfDay;
-  console.log('route?.params:', route?.params);
 
   const flatListRef = useRef(null);
   const dispatch = useDispatch();
@@ -174,6 +181,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
   const [selectHalfDayValue, setSelectHalfDayValue] = useState('');
   const [openResourcePicker, setOpenResourcePicker] = useState(false);
   const [leaveApproversValue, setLeaveApproversValue] = useState(null);
+
   const [resourcePickedId, setResourcePickedId] = useState(null);
   const [leaveApproversList, setLeaveApproversList] = useState([]);
   const [resourcePicks, setResourcePicks] = useState([]);
@@ -261,20 +269,37 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
     if (fromApproverEnd && !isGuestLogin) {
       (async () => {
         try {
+          const {role} = decoded;
+          const isHRManager = role.includes('HR Manager');
           setLoading(true);
           const employeeData = await dispatch(
-            getEmployeesByLeaveApprover(token),
+            isHRManager
+              ? getAllEmployeesForHR({token})
+              : getEmployeesByLeaveApprover(token),
           );
 
-          const finalResources = employeeData?.payload?.map(employee => {
-            const empName = `${
-              employee.firstName ? employee.firstName + ' ' : ''
-            }${employee.middleName ? employee.middleName + ' ' : ''}${
-              employee.lastName ? employee.lastName + ' ' : ''
-            }`;
+          let finalResources;
+          if (isHRManager) {
+            finalResources = employeeData?.payload?.map(employee => {
+              const empName = employee.employee.split('/')[1].trim();
+              return {value: employee.employeeId, label: empName, employee};
+            });
+          } else {
+            finalResources = employeeData?.payload?.map(employee => {
+              const empName = `${
+                employee.firstName ? employee.firstName + ' ' : ''
+              }${employee.middleName ? employee.middleName + ' ' : ''}${
+                employee.lastName ? employee.lastName + ' ' : ''
+              }`;
 
-            return {value: employee.employeeId, label: empName, employee};
-          });
+              return {value: employee.employeeId, label: empName, employee};
+            });
+          }
+
+          finalResources = sortArrayOfObjectsOnProperty(
+            finalResources,
+            'label',
+          );
 
           setResourcePicks(finalResources);
           if (employeeData?.error) {
@@ -287,6 +312,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
             });
           }
         } catch (err) {
+          console.log('errFetchResources:', err);
         } finally {
           setLoading(false);
         }
@@ -347,6 +373,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
     setToDate({
       toDateStr: openLeaveTooDatestr === invalidDate ? '' : openLeaveTooDatestr,
     });
+    setSelectHalfDayValue(null);
 
     if (employeeWeekOffs?.includes(date.getDay())) {
       alert('You already have a weekend holiday on this day.');
@@ -377,6 +404,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
 
   const toCalenderConfirm = async date => {
     toOnCancel();
+    setSelectHalfDayValue(null);
 
     if (totalNumberOfLeaveDays > 1) {
       setHalfDay('None');
@@ -619,34 +647,8 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
     );
   };
 
-  const renderRow = (rowData, rowID, highlighted) => {
-    return (
-      <View style={[styles.row]}>
-        <Text style={[styles.rowText]}>{rowData}</Text>
-      </View>
-    );
-  };
-
   const giveReason = value => {
     setReason(value);
-  };
-
-  const renderRightComponentResource = () => <View />;
-
-  const renderRightComponent = () => (
-    <View style={styles.cardRightContainer}>
-      <Image source={MonthImages.DropDownIcon} style={styles.cardRightImage} />
-    </View>
-  );
-
-  const renderButtonText = option => {
-    return (
-      <View style={styles.rightButtonCont}>
-        <Text style={styles.rightButtonText}>
-          {totalNumberOfLeaveDays > 1 ? 'None' : option}
-        </Text>
-      </View>
-    );
   };
 
   const applyLeave = async () => {
@@ -688,7 +690,8 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
         if (
           (leavesData[i]?.status?.toLowerCase() === 'open' ||
             leavesData[i]?.status?.toLowerCase() === 'approved') &&
-          leavesData[i]?.leaveType?.toLowerCase() !== 'work from home'
+          leavesData[i]?.leaveType?.toLowerCase() !== 'work from home' &&
+          !fromApproverEnd
         ) {
           alert('Leaves are already applied to these dates.');
           return;
@@ -704,7 +707,8 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
         if (
           (leavesData[i]?.status?.toLowerCase() === 'open' ||
             leavesData[i]?.status?.toLowerCase() === 'approved') &&
-          leavesData[i]?.leaveType?.toLowerCase() !== 'work from home'
+          leavesData[i]?.leaveType?.toLowerCase() !== 'work from home' &&
+          !fromApproverEnd
         ) {
           alert('Leaves are already applied to these dates.');
           return;
@@ -761,6 +765,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
 
     setLoading(true);
 
+    console.log('selectedResource:', selectedResource);
     const appliedLeave =
       token &&
       (await dispatch(
@@ -780,11 +785,12 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
             postingDate: new Date(),
             leaveType: selectLeaveTypeValue,
             leaveApprover: fromApproverEnd
-              ? decoded?.emailId
-              : leaveApproverMailID,
+              ? leaveApproversValue
+              : // ? decoded?.emailId
+                leaveApproverMailID,
             fiscalYear: fiscalYear,
             userId: fromApproverEnd
-              ? selectedResource.employee.companyEmail
+              ? selectedResource?.employee?.userId
               : decoded?.emailId,
           },
         }),
@@ -962,6 +968,13 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
     );
   }
 
+  let zIndexStyle = {};
+  if (Platform.OS === 'ios') {
+    zIndexStyle = {
+      zIndex: 9999,
+    };
+  }
+  // const Component = openResourcePicker ? View : ScrollView;
   return (
     // <KeyboardAvoidingView behavior="height" style={styles.mainContainer}>
     <>
@@ -978,30 +991,37 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
       />
       <SafeAreaView style={styles.mainBottomContainer}>
         <View style={styles.swiperContainer}>{leaveSlider}</View>
-
-        {fromApproverEnd ? (
-          <View style={styles.resourcePickerContainer}>
-            <Text style={styles.selectResourceText}>Employee: </Text>
-            {!loading ? (
-              <DropDownPicker
-                placeholder={'Select....'}
-                open={openResourcePicker}
-                value={resourcePickedId}
-                items={resourcePicks}
-                setOpen={setOpenResourcePicker}
-                setValue={setResourcePickedId}
-                setItems={setResourcePicks}
-                onSelectItem={onSelectResource}
-                containerStyle={styles.resourceSelectContainerStyle}
-                style={styles.leaveApproverSelect}
-              />
-            ) : null}
-          </View>
-        ) : null}
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={styles.mainBottomContainer}
-          contentContainerStyle={{flexGrow: 1}}>
+          contentContainerStyle={styles.mainContainerContentContainerStyle}>
+          {fromApproverEnd ? (
+            <View
+              style={{
+                ...styles.resourcePickerContainer,
+                ...zIndexStyle,
+              }}>
+              <Text style={styles.selectResourceText}>Employee: </Text>
+              {!loading ? (
+                <DropDownPicker
+                  searchable={true}
+                  searchPlaceholder="Search..."
+                  listMode="SCROLLVIEW"
+                  placeholder={'Select....'}
+                  open={openResourcePicker}
+                  value={resourcePickedId}
+                  items={resourcePicks}
+                  setOpen={setOpenResourcePicker}
+                  setValue={setResourcePickedId}
+                  setItems={setResourcePicks}
+                  onSelectItem={onSelectResource}
+                  containerStyle={styles.resourceSelectContainerStyle}
+                  style={styles.leaveApproverSelect}
+                />
+              ) : null}
+            </View>
+          ) : null}
+
           <View style={styles.mainPart}>
             <View style={[styles.formContainer]}>
               <View>
@@ -1024,7 +1044,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
                     : fromOpenLeave
                     ? openLeaveTooDatestr
                     : toDate.toDateStr,
-                  zIndex: 10000,
+                  zIndex: 100,
                   resourseRightText: toDatestr,
                   rightDisabled: !fromDate.fromDateObj,
                 })}
@@ -1044,6 +1064,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
                   rightText: 'None',
                   rightDropdown: (
                     <DropDownPicker
+                      dropDownDirection="BOTTOM"
                       disabled={
                         !fromDate.fromDateObj ||
                         !toDate.toDateObj ||
@@ -1056,10 +1077,15 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
                         !fromResource && !fromOpenLeave
                           ? 'Select'
                           : !resourceHalfDay || !isHalfDay
-                          ? none
-                          : resourceHalfDay === 1 || isHalfDay === 1
-                          ? firstFalf
-                          : secondHalf
+                          ? !fromOpenLeave
+                            ? none
+                            : openLeaveNumberOfDays === 0.5
+                            ? halfDayStr
+                            : none
+                          : halfDayStr
+                        // : resourceHalfDay === 1 || isHalfDay === 1
+                        // ? firstFalf
+                        // : secondHalf
                       }
                       // placeholder={'Select'}
                       open={isHalfDayOpen}
@@ -1110,9 +1136,9 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
                   resourseRightText: resourceData?.totalLeaveDays,
                   leftDropdown: (
                     <DropDownPicker
+                      dropDownDirection="BOTTOM"
                       disabled={!isApplyingLeave && !fromApproverEnd}
                       listMode="SCROLLVIEW"
-                      dropDownDirection={'AUTO'}
                       placeholder={
                         fromResource
                           ? resourceData.leaveType
@@ -1282,3 +1308,26 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
 export default ApplyLeave;
 
 // http://10.101.23.48:81/api/Leave/GetLeaveApprover?empId=10876
+
+// employeeId:10529
+// fromDate:2024-02-01T06:15:47.841Z
+// toDate:2024-02-01T06:15:47.841Z
+// totalLeaveDays:1
+// description:Tesstinggg
+// halfDay:0
+// postingDate:2024-02-01T07:09:12.179Z
+// leaveType:Earned Leave
+// leaveApprover:kamal.deepika@thinksys.com
+// fiscalYear:2023-2024
+
+// employeeId:10224
+// fromDate:2024-02-01T06:15:47.841Z
+// toDate:2024-02-01T06:15:47.841Z
+// totalLeaveDays:1
+// description:Testing 2
+// halfDay:0
+// postingDate:2024-02-01T07:10:15.158Z
+// leaveType:Earned Leave
+// leaveApprover:kumar.satish@thinksys.com
+// fiscalYear:2023-2024
+// userId:kamal.deepika@thinksys.com

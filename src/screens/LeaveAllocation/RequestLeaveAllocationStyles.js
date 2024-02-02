@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
   },
   leftStatus: {
-    flex: 3,
+    flex: 2.5,
     paddingHorizontal: wp(2),
     paddingVertical: hp(1),
     justifyContent: 'center',
@@ -58,9 +58,10 @@ const styles = StyleSheet.create({
   },
   textAlignCenter: {
     textAlign: 'center',
+    fontSize: FontSize.h12,
   },
   secondView: {
-    flex: 7,
+    flex: 7.5,
     backgroundColor: Colors.lightcyan,
     paddingHorizontal: wp(2),
     paddingVertical: hp(1),
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
   dismissContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 2,
+    flex: 2.1,
   },
   dismissButton: {
     paddingVertical: 8,

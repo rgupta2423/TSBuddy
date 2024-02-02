@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 
 import styles from './DailyReportsStyles';
 import DailyLeaveReportStatus from './DailyLeaveReportStatus';
@@ -13,7 +13,11 @@ const LeaveTabContent = ({
   selectEndDate,
 }) => {
   return (
-    <View style={styles.mainLeaveTabContainer}>
+    <ScrollView
+      nestedScrollEnabled={true}
+      style={[styles.scrollViewStyle, styles.mainLeaveTabContainer]}
+      contentContainerStyle={styles.scrollViewContentContainerStyle}>
+      {/* <View style={styles.mainLeaveTabContainer}> */}
       <DailyLeaveReportStatus leavesCount={leavesCount} />
       <AllLeavesList
         leaves={leaves}
@@ -21,7 +25,8 @@ const LeaveTabContent = ({
         selectEndDate={selectEndDate}
         isLoadingLeave={isLoadingLeave}
       />
-    </View>
+      {/* </View> */}
+    </ScrollView>
   );
 };
 

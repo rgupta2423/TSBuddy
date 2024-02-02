@@ -92,7 +92,7 @@ const LeaveAllocation = ({navigation}) => {
               : styles.backgroundGreen,
           ]}>
           <Text style={styles.leaveType}>
-            {item.leaveDaysCount}{' '}
+            {item.totalLeaveDays}{' '}
             {item.leaveType
               .split(' ')
               .map(word => word.charAt(0).toUpperCase())

@@ -133,12 +133,14 @@ const styles = StyleSheet.create({
   customSearchContainer: {
     width: '100%',
     marginBottom: 14,
+    paddingHorizontal: 10,
   },
   textInput: {
     paddingVertical: 10,
     fontSize: FontSize.h16,
     color: Colors.dune,
     flex: 1,
+    paddingHorizontal: 5,
   },
   searchIcon: {
     height: 20,
@@ -399,6 +401,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  scrollViewStyle: {
+    flex: 1,
+  },
+  scrollViewContentContainerStyle: {
+    flexGrow: 1,
   },
 });
 
