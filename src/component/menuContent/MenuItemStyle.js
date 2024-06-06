@@ -6,7 +6,9 @@ import {
 import {Colors} from 'colors/Colors';
 import {FontFamily} from 'constants/fonts';
 export default StyleSheet.create({
-  mainContainer: {paddingLeft: 20},
+  mainContainer: {
+    paddingHorizontal: 20,
+  },
   container: {
     backgroundColor: Colors.white,
     width: wp(56),

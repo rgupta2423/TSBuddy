@@ -50,11 +50,13 @@ import {
   sortArrayOfObjectsOnProperty,
 } from 'utils/utils';
 import CustomButton from 'navigation/CustomButton';
+import CombineHeader from 'component/header/CombineHeader';
+import {LeaveAllocationSeparate} from 'navigation/Route';
 
 const initialEndDate = {endDateStr: 'Select End Date'};
 const initialStartDate = {startDateStr: 'Select Start Date'};
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const alreadyWeekend = 'You already have a weekend holiday on this day.';
+// const alreadyWeekend = 'You already have a weekend holiday on this day.';
 const alreadyNationalHoliday = 'You can not take a WFH on National holiday.';
 const alreadyWFHApplied = 'WFH are already applied for these dates.';
 const workFromHome = 'Work From Home';
@@ -308,12 +310,12 @@ const ApplyWFH = ({navigation, fromApproverEnd}) => {
 
   const handleStartConfirm = date => {
     Keyboard.dismiss;
-    if (employeeWeekOffs?.includes(date.getDay())) {
-      // date.setDate(date.getDate() + 1);
-      alert(alreadyWeekend);
-      startOnCancel();
-      return;
-    }
+    // if (employeeWeekOffs?.includes(date.getDay())) {
+    //   // date.setDate(date.getDate() + 1);
+    //   alert(alreadyWeekend);
+    //   startOnCancel();
+    //   return;
+    // }
 
     for (let i = 0; i < holidayData.length; i++) {
       const holidayObj = new Date(holidayData[i].holidayDate);
@@ -347,12 +349,12 @@ const ApplyWFH = ({navigation, fromApproverEnd}) => {
 
   const handleEndConfirm = date => {
     Keyboard.dismiss();
-    if (employeeWeekOffs?.includes(date.getDay())) {
-      // date.setDate(date.getDate() + 1);
-      alert(alreadyWeekend);
-      endOnCancel();
-      return;
-    }
+    // if (employeeWeekOffs?.includes(date.getDay())) {
+    //   // date.setDate(date.getDate() + 1);
+    //   alert(alreadyWeekend);
+    //   endOnCancel();
+    //   return;
+    // }
 
     for (let i = 0; i < holidayData.length; i++) {
       const holidayObj = new Date(holidayData[i].holidayDate);
@@ -637,7 +639,7 @@ const ApplyWFH = ({navigation, fromApproverEnd}) => {
         ]);
       } else {
         fetchWFHs();
-        Alert.alert('Success', 'Leave Dismissed successfully!', [
+        Alert.alert('Success', 'WFH Dismissed successfully!', [
           {
             text: 'Ok',
             onPress: () => {
@@ -653,15 +655,42 @@ const ApplyWFH = ({navigation, fromApproverEnd}) => {
     }
   };
 
+  const leftClickHandler = () => {
+    navigation.navigate(LeaveAllocationSeparate);
+  };
+
+  const rightClickHandler = () => {};
+
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <CustomHeader
+      {fromApproverEnd ? (
+        <CustomHeader
+          showDrawerMenu={false}
+          // showDrawerMenu={fromApproverEnd ? false : true}
+          title="Apply WFH"
+          navigation={navigation}
+          isHome={false}
+          showHeaderRight={false}
+          // showHeaderRight={fromApproverEnd ? false : true}
+        />
+      ) : (
+        <CombineHeader
+          isFirstComponent={false}
+          isLastComponent={true}
+          navigation={navigation}
+          title="Apply WFH"
+          leftClickHandler={leftClickHandler}
+          rightClickHandler={rightClickHandler}
+        />
+      )}
+
+      {/* <CustomHeader
         showDrawerMenu={fromApproverEnd ? false : true}
         title="Apply WFH"
         navigation={navigation}
         isHome={false}
         showHeaderRight={fromApproverEnd ? false : true}
-      />
+      /> */}
 
       <ScrollView
         contentContainerStyle={styles.containerContentContainerStyle}

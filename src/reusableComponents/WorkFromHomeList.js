@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   SafeAreaView,
   View,
@@ -21,7 +22,8 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {FontFamily} from 'constants/fonts';
 import ShowAlert from 'customComponents/CustomError';
 import {ERROR} from 'utils/string';
-import Loader from 'component/LoadingScreen/LoadingScreen';
+import Loader from 'component/loader/Loader';
+import {guestLeavesScreenData} from 'guestData';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -103,7 +105,7 @@ const WorkFromHomeList = props => {
                 ...item,
                 fromWfh: true,
                 employeeID,
-                fromResource,
+                // fromResource,
                 resourceEmployeeID,
                 fromResource: true,
               });

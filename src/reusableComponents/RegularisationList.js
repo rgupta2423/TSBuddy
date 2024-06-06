@@ -1,6 +1,7 @@
+import React from 'react';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {Colors} from 'colors/Colors';
-import Loader from 'component/LoadingScreen/LoadingScreen';
+import Loader from 'component/loader/Loader';
 import {FontFamily} from 'constants/fonts';
 import ShowAlert from 'customComponents/CustomError';
 import {guestLeavesScreenData} from 'guestData';

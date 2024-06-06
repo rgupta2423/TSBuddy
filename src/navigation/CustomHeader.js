@@ -11,8 +11,9 @@ import {
 } from 'react-native';
 import MenuSVG from 'assets/newDashboardIcons/bars-sort.svg';
 import {MonthImages} from 'assets/monthImage/MonthImage';
-import {useRoute} from '@react-navigation/native';
+import {useRoute, CommonActions} from '@react-navigation/native';
 import {employeeProfileScreen} from 'navigation/Route';
+import AppIcon from 'assets/mipmap/appIcon120-1.png';
 import SearchIcon from 'assets/newDashboardIcons/user-magnifying-glass.svg';
 import {heightPercentageToDP as hp} from 'utils/Responsive';
 
@@ -23,6 +24,8 @@ const CustomHeader = function ({
   isHome,
   showHeaderRight,
   headerRight,
+  name,
+  hasToPop,
   // navigation2,
 }) {
   const route = useRoute();
@@ -49,7 +52,6 @@ const CustomHeader = function ({
         <Pressable
           onPress={() => {
             navigation.goBack();
-            // navigation.pop();
           }}>
           <Image source={MonthImages.backArrowS} style={styles.backArrowIcon} />
         </Pressable>
@@ -57,7 +59,11 @@ const CustomHeader = function ({
 
       <View style={styles.headerIconContainer}>
         {isHome ? (
-          <Image source={MonthImages.TRMSIcon} style={styles.headerLogo} />
+          <Image
+            resizeMode="stretch"
+            source={AppIcon}
+            style={styles.headerLogo}
+          />
         ) : (
           <Text style={styles.headerTitle}>{title}</Text>
         )}
@@ -70,6 +76,8 @@ const CustomHeader = function ({
               onPress={() => {
                 // dispatch(setFromNavigatedScreen({screenName}));
                 navigation.navigate(employeeProfileScreen, {screenName});
+                // navigation.navigate(name);
+                // navigation.navigate('LeavesScreeen', {screenName});
               }}>
               <SearchIcon
                 fill={isHome ? Colors.black : Colors.white}
@@ -124,7 +132,9 @@ const styles = StyleSheet.create({
     // marginLeft: wp(22),
   },
   headerLogo: {
-    width: 108,
+    // width: 108,
+    // height: 40,
     height: 40,
+    width: 64,
   },
 });

@@ -9,8 +9,13 @@ import {
 } from 'redux/homeSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import jwt_decode from 'jwt-decode';
-import {ApplyLeaveAllocationRequest} from 'navigation/Route';
+import {
+  ApplyLeaveAllocationRequest,
+  ApplyWFHSeparate,
+  LeavesSeparate,
+} from 'navigation/Route';
 import CustomButton from 'navigation/CustomButton';
+import CombineHeader from 'component/header/CombineHeader';
 
 const LeaveAllocation = ({navigation}) => {
   const {userToken: token} = useSelector(state => state.auth);
@@ -134,9 +139,25 @@ const LeaveAllocation = ({navigation}) => {
     );
   };
 
+  const rightClickHandler = () => {
+    navigation.navigate(ApplyWFHSeparate);
+  };
+
+  const leftClickHandler = () => {
+    navigation.navigate(LeavesSeparate);
+  };
+
   return (
     <View style={styles.mainContainer}>
-      <CustomHeader
+      <CombineHeader
+        isFirstComponent={false}
+        isLastComponent={false}
+        navigation={navigation}
+        title="Leave Allocation"
+        rightClickHandler={rightClickHandler}
+        leftClickHandler={leftClickHandler}
+      />
+      {/* <CustomHeader
         showDrawerMenu={true}
         title="Leave Allocation"
         navigation={navigation}
@@ -147,7 +168,17 @@ const LeaveAllocation = ({navigation}) => {
             <Text style={styles.headerRightText}>New</Text>
           </Pressable>
         }
-      />
+      /> */}
+      <Pressable onPress={onNewPress} style={styles.applyLeaveButton}>
+        <View style={styles.applyLeaveTextContainer}>
+          <Text style={styles.applyLeaveAddSign}>+</Text>
+        </View>
+
+        <Text style={styles.leaveApplicationText}>
+          Make a new Leave Allocation
+        </Text>
+        <View />
+      </Pressable>
       <View style={styles.mainContainerExcludedHeader}>
         {isLoading ? (
           <View style={styles.loaderContainer}>

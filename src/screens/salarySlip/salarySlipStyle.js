@@ -109,6 +109,15 @@ export default StyleSheet.create({
     fontFamily: FontFamily.RobotoBold,
     fontSize: FontSize.h13,
   },
+  noSalaryContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
+  noSalaryText: {
+    fontSize: FontSize.h16,
+    fontFamily: FontFamily.RobotoMedium,
+  },
   salaryNotFound: {
     justifyContent: 'center',
     alignItems: 'center',

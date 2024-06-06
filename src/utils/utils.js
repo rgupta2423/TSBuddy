@@ -215,9 +215,17 @@ export const getUniqueArrayOfObjects = arr => {
     return index === self.findIndex(o => o.value === obj.value);
   });
 };
-export const getTimeStringFromObject = timeObj =>
-  `${timeObj.getHours() > 9 ? timeObj.getHours() : '0' + timeObj.getHours()}:${
+export const getTimeStringFromObject = timeObj => {
+  if (!timeObj || timeObj === null) {
+    console.log('timeObjInside:', timeObj);
+    return null;
+  }
+
+  return `${
+    timeObj.getHours() > 9 ? timeObj.getHours() : '0' + timeObj.getHours()
+  }:${
     timeObj.getMinutes() > 9 ? timeObj.getMinutes() : '0' + timeObj.getMinutes()
   }:${
     timeObj.getSeconds() > 9 ? timeObj.getSeconds() : '0' + timeObj.getSeconds()
   }`;
+};

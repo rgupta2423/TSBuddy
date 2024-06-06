@@ -1,12 +1,13 @@
 import React from 'react';
 import {View, Text, Dimensions, Pressable} from 'react-native';
 
-import {BarChart} from 'react-native-chart-kit';
+import {BarChart, LineChart} from 'react-native-chart-kit';
 import {useNavigation} from '@react-navigation/native';
 
 import styles from './RemainingLeavesStyles';
 import {Colors} from 'colors/Colors';
 import {useSelector} from 'react-redux';
+import {LeaveApplyScreen, LeavesSeparate} from 'navigation/Route';
 
 const RemainingLeaves = () => {
   const navigation = useNavigation();
@@ -31,67 +32,53 @@ const RemainingLeaves = () => {
 
   const barChartGraph = ({data, rh}) => {
     return (
-      <BarChart
-        showVerticalLabels={true}
-        verticalLabelRotation={30}
-        segments={rh ? 2 : 4}
-        spacingInner={0}
-        flatColor={true}
-        showValuesOnTopOfBars={true}
-        showBarTops={false}
-        withInnerLines={false}
-        fromZero={true}
-        withVerticalLabels={false}
-        withCustomBarColorFromData={true}
-        data={{
-          datasets: [
-            {
-              data,
-              colors: [
-                () => Colors.lovelyYellow,
-                () => Colors.lovelyBlue,
-                () => Colors.lovelyGreen,
-                () => Colors.red,
-              ],
+      <View>
+        <BarChart
+          showVerticalLabels={true}
+          verticalLabelRotation={30}
+          segments={rh ? 2 : 4}
+          spacingInner={0}
+          flatColor={true}
+          showValuesOnTopOfBars={true}
+          showBarTops={false}
+          withInnerLines={false}
+          fromZero={true}
+          withVerticalLabels={false}
+          withCustomBarColorFromData={true}
+          data={{
+            datasets: [
+              {
+                data,
+                colors: [
+                  () => Colors.lovelyYellow,
+                  () => Colors.lovelyBlue,
+                  () => Colors.lovelyGreen,
+                  () => Colors.red,
+                ],
+              },
+            ],
+          }}
+          width={Dimensions.get('window').width * 0.46}
+          height={220}
+          chartConfig={{
+            backgroundColor: Colors.white,
+            backgroundGradientFrom: Colors.white,
+            backgroundGradientTo: Colors.white,
+            decimalPlaces: 0,
+            fillShadowGradientOpacity: '0.5',
+            barPercentage: 0.25,
+            color: (opacity = 1) =>
+              Colors.customColor({opacity, r: 0, g: 0, b: 0}),
+            style: {
+              borderRadius: 0,
             },
-          ],
-        }}
-        width={
-          rh
-            ? Dimensions.get('window').width * 0.45
-            : Dimensions.get('window').width * 0.45
-        }
-        height={220}
-        chartConfig={{
-          backgroundColor: Colors.white,
-          backgroundGradientFrom: Colors.white,
-          backgroundGradientTo: Colors.white,
-          decimalPlaces: 0,
-          fillShadowGradientOpacity: '0.5',
-          barPercentage: 0.25,
-          color: (opacity = 1) =>
-            Colors.customColor({opacity, r: 0, g: 0, b: 0}),
-          style: {
-            borderRadius: 0,
-          },
-          categoryPercentage: 0.5,
-        }}
-        style={styles.barChartStyle}
-      />
+            categoryPercentage: 0.5,
+          }}
+          style={styles.barChartStyle}
+        />
+      </View>
     );
   };
-  // if (remainingLeaves?.length === 0) {
-  //   return (
-  //     <View
-  //       style={{
-  //         height: hp(16),
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //       }}>
-  //       <Text>No remaining leaves found.</Text>
-  //     </View>
-  //   );
-  // }
 
   return (
     <View style={styles.mainContainer}>
@@ -122,15 +109,65 @@ const RemainingLeaves = () => {
 
               ////////////////////////////////////////////////////////////////
 
-              navigation.navigate('Leaves', {
-                screen: 'LeaveApplyScreen',
-                initial: false,
-                params: {
-                  leavesData,
-                  openLeavesCount: openLeaves,
-                  applyLeave: true,
-                },
-              });
+              // navigation.navigate('Calendar', {
+              //   screen: LeavesSeparate,
+              //   initial: false,
+              //   params: {
+              //     // screen: LeavesSeparate,
+              //     params: {
+              //       // screen: LeaveApplyScreen,
+              //       leavesData,
+              //       openLeavesCount: openLeaves,
+              //       applyLeave: true,
+              //     },
+              //   },
+              // });
+              // navigation.navigate('Calendar', {
+              //   screen: 'CalendarMain',
+              //   params: {
+              //     screen: LeavesSeparate,
+              //     params: {
+              //       screen: LeaveApplyScreen,
+              //       params: {
+              //         leavesData,
+              //         openLeavesCount: openLeaves,
+              //         applyLeave: true,
+              //       },
+              //     },
+              //   },
+              // });
+              navigation.navigate('Calendar');
+              // ====
+              // navigation.navigate('CalendarMain', {
+              //   screen: LeavesSeparate,
+              //   params: {
+              //     screen: LeaveApplyScreen,
+              //     params: {
+              //       leavesData,
+              //       openLeavesCount: openLeaves,
+              //       applyLeave: true,
+              //     },
+              //   },
+              // });
+              // ===
+              // navigation.navigate('CalendarMain', {
+              //   screen: LeavesSeparate,
+              //   leavesData,
+              //   openLeavesCount: openLeaves,
+              //   applyLeave: true,
+              // });
+
+              // navigation.navigate('CalendarMain', {
+              //   screen: 'LeavesSeparate',
+              //   params: {
+              //     screen: 'LeaveApplyScreen',
+              //     params: {
+              //       leavesData,
+              //       openLeavesCount: openLeaves,
+              //       applyLeave: true,
+              //     },
+              //   },
+              // });
             }}
             style={styles.buttonContainer}>
             <Text style={styles.buttonText}>Apply</Text>

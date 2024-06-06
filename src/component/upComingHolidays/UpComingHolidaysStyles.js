@@ -36,6 +36,7 @@ export default StyleSheet.create({
     marginBottom: 5,
     paddingHorizontal: wp(4),
     justifyContent: 'space-between',
+    flex: 1,
   },
   textView: {
     paddingVertical: hp(1.6),
@@ -69,10 +70,13 @@ export default StyleSheet.create({
     color: Colors.lightBlue,
     marginVertical: 4,
   },
-  dateContainer: {flexDirection: 'row'},
+  dateContainer: {
+    flexDirection: 'row',
+    // borderWidth: 1,
+    flex: 8,
+  },
   daysContainer: {
-    marginRight: wp(5),
-    width: wp(16),
+    flex: 1,
   },
   daysText: {
     fontSize: 26,
@@ -81,6 +85,7 @@ export default StyleSheet.create({
   },
   typeDateContainer: {
     justifyContent: 'center',
+    flex: 2,
   },
   leaveTypeText: {
     fontSize: 18,
@@ -90,5 +95,6 @@ export default StyleSheet.create({
   imageContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 2,
   },
 });

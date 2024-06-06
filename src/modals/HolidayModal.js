@@ -6,6 +6,8 @@ import {
   TouchableWithoutFeedback,
   ImageBackground,
   StyleSheet,
+  ScrollView,
+  Image,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import {
@@ -47,55 +49,53 @@ const HolidayModal = ({HolidaysData, holidaysShowModal}) => {
   return (
     <>
       {holidaysShowModal ? (
-        <TouchableWithoutFeedback
-          onPress={() => {
+        <Modal
+          backdropOpacity={0.2}
+          // animationType="fade"
+          animationIn={'bounceIn'}
+          animationOut={'jello'}
+          transparent={true}
+          closeOnClick={true}
+          isVisible={holidaysShowModal}
+          onBackdropPress={() => {
+            holidaysSetShowModal(false);
+          }}
+          onBackButtonPress={() => {
             holidaysSetShowModal(false);
           }}>
-          <Modal
-            backdropOpacity={0.2}
-            // animationType="fade"
-            animationIn={'bounceIn'}
-            animationOut={'jello'}
-            transparent={true}
-            closeOnClick={true}
-            isVisible={holidaysShowModal}
-            onBackdropPress={() => {
-              holidaysSetShowModal(false);
-            }}
-            onBackButtonPress={() => {
-              holidaysSetShowModal(false);
-            }}>
-            <View style={styles.container}>
-              <ImageBackground
-                source={image}
-                resizeMode="contain"
-                style={{height: '100%', width: '100%'}}>
-                <View style={styles.secondContainer}>
-                  <Text style={{color: Colors.darkBlue}}>{newDateFormate}</Text>
-                  <Text style={{color: Colors.darkBlue}}>{dayName}</Text>
-                </View>
-                <View style={styles.thirdView}>
-                  <Text style={styles.textline}>{description}</Text>
-                  <Text style={{opacity: 0.6, fontSize: 16}}>{definition}</Text>
-                </View>
-              </ImageBackground>
-            </View>
-          </Modal>
-        </TouchableWithoutFeedback>
+          <View style={styles.container}>
+            <Image source={image} resizeMode="contain" style={styles.image} />
+            {/* <View style={styles.secondContainer}>
+                <Text style={{color: Colors.darkBlue}}>{newDateFormate}</Text>
+                <Text style={{color: Colors.darkBlue}}>{dayName}</Text>
+              </View> */}
+
+            {/* <View style={styles.thirdView}>
+                <Text style={styles.textline}>{description}</Text>
+                <Text style={{opacity: 0.6, fontSize: 16}}>{definition}</Text>
+              </View> */}
+            <ScrollView
+              // style={{height: 200}}
+              contentContainerStyle={styles.thirdView}>
+              <Text style={styles.textline}>{description}</Text>
+              <Text style={{opacity: 0.6, fontSize: 16}}>{definition}</Text>
+            </ScrollView>
+          </View>
+        </Modal>
       ) : null}
     </>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    height: '34.5%',
+    height: '65%',
     width: '90%',
     justifyContent: 'center',
     position: 'relative',
     alignItems: 'center',
     backgroundColor: Colors.white,
     alignSelf: 'center',
-    marginBottom: 200,
+    // marginBottom: 200,
     borderRadius: 5,
   },
   secondContainer: {
@@ -109,6 +109,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  image: {
+    height: '50%',
   },
   thirdView: {
     backgroundColor: Colors.white,

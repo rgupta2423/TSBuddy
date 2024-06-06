@@ -24,3 +24,7 @@ export const LeaveApplicationForApproverName = 'LeaveApplicationForApprover';
 export const WFHApplicationForApproverName = 'WFHApplicationForApprover';
 export const LeaveAllocationMain = 'LeaveAllocationMainScreen';
 export const ApplyLeaveAllocationRequest = 'ApplyLeaveAllocationRequest';
+export const AttendanceSeparate = 'AttendanceSeparateScreen';
+export const LeavesSeparate = 'LeaveSeparateScreen';
+export const LeaveAllocationSeparate = 'LeaveAllocationSeparateScreen';
+export const ApplyWFHSeparate = 'ApplyWFHSeparateScreen';

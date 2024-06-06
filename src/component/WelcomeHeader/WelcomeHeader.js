@@ -95,13 +95,13 @@ const WelcomeHeader = ({navigation}) => {
           if (isCheckedOutAtleastOnce && lastActivity.attendanceState === 1) {
             isFinalCheckOut = true;
             lastCheckOutTime = getTimeStringFromObject(
-              new Date(lastActivity.time),
+              new Date(lastActivity?.time),
             );
 
             // ================
             const checkInDateObj = new Date(checkInOutFullDetails[0]?.time);
             const totalSpentTime = +(
-              new Date(lastActivity.time) - checkInDateObj
+              new Date(lastActivity?.time) - checkInDateObj
             );
 
             const hours = +Math.floor(totalSpentTime / (1000 * 60 * 60));
@@ -117,7 +117,6 @@ const WelcomeHeader = ({navigation}) => {
               empMachineCode: +checkIn?.payload[0]?.employeeMachineCode,
             });
           } else {
-            console.log('inside:', 'else');
             const checkInDateObj = new Date(checkIn?.payload[0]?.time);
             const totalSpentTime = +(new Date() - checkInDateObj);
 
@@ -135,14 +134,17 @@ const WelcomeHeader = ({navigation}) => {
             });
           }
 
-          const checkInTimeObj = new Date(checkInOutFullDetails[0].time);
-          const finalCheckInTimeStr = getTimeStringFromObject(checkInTimeObj);
+          const checkInTimeObj = new Date(checkInOutFullDetails[0]?.time);
+
+          const finalCheckInTimeStr = checkInOutFullDetails[0]?.time
+            ? getTimeStringFromObject(checkInTimeObj)
+            : undefined;
 
           setCheckInOutDetails(prevDetails => ({
             ...prevDetails,
             checkIn: finalCheckInTimeStr,
             checkOut: lastCheckOutTime,
-            isCheckedIn: checkInOutFullDetails.length > 0,
+            isCheckedIn: checkInOutFullDetails?.length > 0,
             isCheckedOut: isCheckedOutAtleastOnce,
             isFinalCheckOut,
           }));
@@ -159,6 +161,7 @@ const WelcomeHeader = ({navigation}) => {
           const employeeShift = await dispatch(
             getEmployeeShift({token, id: employeeID}),
           );
+          console.log('employeeShift:::::', employeeShift);
 
           const checkedInTimeObj = new Date(checkIn.payload[0]?.time);
           const properInTime = employeeShift?.payload?.startTime;

@@ -25,9 +25,9 @@ import {
   startEndDateFormat,
   todaySelectedDate,
 } from 'utils/utils';
-import {RegularzitionScreen} from 'navigation/Route';
-import Loader from 'component/LoadingScreen/LoadingScreen';
-import CustomHeader from 'navigation/CustomHeader';
+import {LeavesSeparate, RegularzitionScreen} from 'navigation/Route';
+import Loader from 'component/loader/Loader';
+import CombineHeader from 'component/header/CombineHeader';
 
 const DATA = [
   {
@@ -69,8 +69,9 @@ const Attendence = ({navigation}) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [finalWeekTime, setFinalWeekTime] = useState('00:00');
-  const [todaysDay, setTodayDay] = useState();
-  const [todaysDate, setTodayDate] = useState();
+
+  const {currentDay: todaysDay, finalTodayDate: todaysDate} =
+    finalCurrentDate();
 
   useEffect(() => {
     const pressedDate = dailyAttendance?.find(
@@ -115,48 +116,46 @@ const Attendence = ({navigation}) => {
   //   return date.getDate();
   // }
 
-  const fetchData = useCallback(
-    async function fetchData() {
-      if (employeeID && token) {
-        try {
-          if (visisbleMonth > 0 || visibleYear > 0) {
-            setLoading(true);
-            const attendence = await dispatch(
-              getAttendencaeData({
-                token,
-                employeeID,
-                visisbleMonth,
-                visibleYear,
-              }),
-            );
-            if (attendence?.error) {
-              ShowAlert({
-                messageHeader: ERROR,
-                messageSubHeader: attendence?.error?.message,
-                buttonText: 'Close',
-                dispatch,
-                navigation,
-              });
-            }
+  const getAttandanceData = useCallback(async () => {
+    if (employeeID && token) {
+      try {
+        if (visisbleMonth > 0 || visibleYear > 0) {
+          setLoading(true);
+          const attendence = await dispatch(
+            getAttendencaeData({
+              token,
+              employeeID,
+              visisbleMonth,
+              visibleYear,
+            }),
+          );
+          if (attendence?.error) {
+            ShowAlert({
+              messageHeader: ERROR,
+              messageSubHeader: attendence?.error?.message,
+              buttonText: 'Close',
+              dispatch,
+              navigation,
+            });
           }
-        } catch (err) {
-          console.log('errAttendance:', err);
-        } finally {
-          setLoading(false);
         }
+      } catch (err) {
+        console.log('errAttendance:', err);
+      } finally {
+        setLoading(false);
       }
-    },
-    [dispatch, navigation, employeeID, token, visibleYear, visisbleMonth],
-  );
+    }
+  }, [dispatch, navigation, employeeID, token, visibleYear, visisbleMonth]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchData();
-    }, 100);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [visisbleMonth, fetchData]);
+    getAttandanceData();
+    // const timer = setTimeout(() => {
+    //   fetchData();
+    // }, 100);
+    // return () => {
+    //   clearTimeout(timer);
+    // };
+  }, [visisbleMonth, getAttandanceData]);
 
   const startEndDate = () => {
     let start = attendanceDate(1);
@@ -165,10 +164,6 @@ const Attendence = ({navigation}) => {
   };
 
   useEffect(() => {
-    const {currentDay, finalTodayDate} = finalCurrentDate();
-    setTodayDate(finalTodayDate);
-    setTodayDay(currentDay);
-
     const {start, end} = startEndDate();
     let startDateFormat = startEndDateFormat(start);
     let endDateFormat = startEndDateFormat(end);
@@ -180,6 +175,7 @@ const Attendence = ({navigation}) => {
     privMonDAy.setDate(privMonDAy.getDate() - ((privMonDAy.getDay() + 6) % 7));
     var now = new Date();
     const todayDateIndex = now.getDay();
+    // console.log('todayDateIndex:', todayDateIndex);
     const todayDate = now.getDate();
 
     let weekDays = [];
@@ -188,6 +184,8 @@ const Attendence = ({navigation}) => {
       let dayValue = todayDate - i;
       weekDays.push(dayValue);
     }
+
+    console.log('weekDays:', todayDateIndex);
 
     let thisWeekDays = [];
 
@@ -324,15 +322,27 @@ const Attendence = ({navigation}) => {
     );
   }, []);
 
+  const rightClickHandler = () => {
+    navigation.navigate(LeavesSeparate);
+  };
+
   return (
     <>
-      <CustomHeader
+      <CombineHeader
+        isFirstComponent={true}
+        isLastComponent={false}
+        navigation={navigation}
+        title="Attendance"
+        rightClickHandler={rightClickHandler}
+      />
+      {/* <CustomHeader
         showDrawerMenu={true}
         title="Attendance"
         navigation={navigation}
         isHome={false}
         showHeaderRight={true}
-      />
+        // name="LeavesScreeen"
+      /> */}
       <SafeAreaView style={styles.container}>
         <ImageBackground
           resizeMode="stretch"
@@ -452,9 +462,9 @@ const RenderCalender = ({
             day.month === new Date().getMonth() + 1 &&
             day.day === new Date().getDate();
 
-          const dateObj = new Date(day?.dateString);
-          const dayIndex = dateObj.getDay();
-          const isWeekend = dayIndex === 0 || dayIndex === 6;
+          // const dateObj = new Date(day?.dateString);
+          // const dayIndex = dateObj.getDay();
+          // const isWeekend = dayIndex === 0 || dayIndex === 6;
           const pressedDate = day.day;
           const pressedMonth = day.month;
           const pressedYear = day.year;
@@ -479,7 +489,7 @@ const RenderCalender = ({
           if (isHoliday) {
             return;
           }
-          if (Date.now() < day.timestamp || isCurrentDatePressed || isWeekend) {
+          if (Date.now() < day.timestamp || isCurrentDatePressed) {
             return;
           }
           let filterData = dailyAttendance?.filter(element => {

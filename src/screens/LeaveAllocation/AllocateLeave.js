@@ -225,7 +225,7 @@ const AllocateLeave = ({navigation}) => {
       );
       if (leaveAllocation.error) {
         ShowAlert({
-          messageHeader: ERROR,
+          messageHeader: '',
           messageSubHeader: leaveAllocation?.error?.message,
           buttonText: 'Close',
           dispatch,
@@ -359,6 +359,7 @@ const AllocateLeave = ({navigation}) => {
           ) : null}
 
           <DateTimePickerModal
+            maximumDate={new Date()}
             isVisible={fromDatePickerVisible}
             mode="date"
             onConfirm={fromConfirmHandler}
@@ -367,6 +368,7 @@ const AllocateLeave = ({navigation}) => {
           <DateTimePickerModal
             date={fromDate ? fromDate?.dateObj : undefined}
             minimumDate={fromDate ? fromDate.dateObj : undefined}
+            maximumDate={new Date()}
             isVisible={toDatePickerVisible}
             mode="date"
             onConfirm={toConfirmHandler}

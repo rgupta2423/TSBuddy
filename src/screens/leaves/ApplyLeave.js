@@ -100,7 +100,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
 
   const fromOpenLeave = route?.params?.fromOpenLeave || false;
   const resourceEmployeeID = route?.params?.resourceEmployeeID || false;
-  let isEditOpenleave = false;
+  const isEditOpenleave = false;
 
   const resourceData = route?.params;
   const openLeaveData = route?.params;
@@ -143,7 +143,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
 
   const flatListRef = useRef(null);
   const dispatch = useDispatch();
-  var decoded = token && jwt_decode(token);
+  const decoded = token && jwt_decode(token);
   const employeeID = decoded?.id || '';
 
   const remainingLeaves = leaveMenuDetails?.remainingLeaves || [];
@@ -325,6 +325,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
       (async () => {
         try {
           const weekOffs = employeeShiftDataObj?.weeklyOff.split('_');
+          // console.log('weekOffs:', weekOffs);
 
           const finalWeekOffs = [];
           daysOfWeek?.map((el, index) => {
@@ -798,7 +799,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
 
     setLoading(false);
     if (appliedLeave?.error) {
-      alert(appliedLeave.error.message);
+      alert(appliedLeave?.error?.message || 'Something went wrong');
     } else {
       Alert.alert('Success', 'Leave applied successfully!', [
         {
@@ -978,6 +979,15 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
   return (
     // <KeyboardAvoidingView behavior="height" style={styles.mainContainer}>
     <>
+      {/* {route?.params?.fromWfh || fromResource ? (
+        <CustomHeader
+          showDrawerMenu={false}
+          title={'Leave Details'}
+          navigation={navigation}
+          isHome={false}
+          showHeaderRight={false}
+        />
+      ) : null} */}
       <CustomHeader
         showDrawerMenu={false}
         title={
@@ -988,6 +998,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
         navigation={navigation}
         isHome={false}
         showHeaderRight={false}
+        hasToPop={true}
       />
       <SafeAreaView style={styles.mainBottomContainer}>
         <View style={styles.swiperContainer}>{leaveSlider}</View>
@@ -1222,7 +1233,11 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
               </View>
 
               {!fromResource && !fromOpenLeave && (
-                <View style={styles.leaveApproverContainer}>
+                <View
+                  style={[
+                    styles.leaveApproverContainer,
+                    isLeaveTypeOpen ? styles.negativeZIndex : null,
+                  ]}>
                   <Text style={styles.leaveApproverText}>Leave Approver:</Text>
 
                   <DropDownPicker

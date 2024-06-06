@@ -12,7 +12,9 @@ export default StyleSheet.create({
     // width: '100%',
     flex: 1,
   },
-  mainTopContainer: {flex: 1},
+  mainTopContainer: {
+    flex: 1,
+  },
   textInputContainer: {
     width: '90%',
     backgroundColor: Colors.darkTransparentColor,
@@ -55,7 +57,16 @@ export default StyleSheet.create({
     height: '100%',
     width: '100%',
   },
-  userNameText: {height: '100%', width: '100%'},
+  userNameText: {
+    height: '100%',
+    width: '100%',
+  },
+  errorText: {
+    color: Colors.red,
+    fontSize: FontSize.h15,
+    fontFamily: FontFamily.RobotoMedium,
+    textAlign: 'center',
+  },
   passwordView: {
     paddingHorizontal: wp(2),
     paddingVertical: hp(3),

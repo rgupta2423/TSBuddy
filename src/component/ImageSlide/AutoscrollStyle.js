@@ -7,9 +7,8 @@ import {Colors} from 'colors/Colors';
 import {FontFamily} from 'constants/fonts';
 export default StyleSheet.create({
   mainContainer: {
-    flex: 1,
     justifyContent: 'center',
-    paddingLeft: 20,
+    paddingHorizontal: 20,
   },
   container: {
     paddingRight: 1,
@@ -90,8 +89,15 @@ export default StyleSheet.create({
     left: 16,
     color: Colors.fadedOrange,
   },
-  eventContainerHeader: {flexDirection: 'row', alignItems: 'center'},
-  eventImage: {height: 40, width: 40, marginRight: 24},
+  eventContainerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  eventImage: {
+    height: 40,
+    width: 40,
+    marginRight: 24,
+  },
   noEventTextCont: {
     justifyContent: 'center',
     alignItems: 'center',

@@ -125,6 +125,8 @@ import DropDownIconSVG from 'assets/newDashboardIcons/dropdownIcon.svg';
 import SearchIconSVG from 'assets/newDashboardIcons/search.svg';
 import GroupIconSVG from 'assets/newDashboardIcons/group.svg';
 import LocationIconSVG from 'assets/newDashboardIcons/location.svg';
+import ArrowLeft from 'assets/svgIcons/ArrowLeft.svg';
+import ArrowRight from 'assets/svgIcons/ArrowRight.svg';
 
 //emoji
 import Smily from 'assets/emoji/smily.png';
@@ -258,4 +260,6 @@ export const MonthImages = {
   HomeIcon,
   HouseIcon,
   BriefCaseIcon,
+  ArrowLeft,
+  ArrowRight,
 };

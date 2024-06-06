@@ -10,7 +10,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {ERROR} from 'utils/string';
 import ShowAlert from 'customComponents/CustomError';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import Loader from 'component/LoadingScreen/LoadingScreen';
+import Loader from 'component/loader/Loader';
 
 const Policies = ({navigation}) => {
   const [loading, setLoading] = useState(false);
@@ -52,7 +52,6 @@ const Policies = ({navigation}) => {
         style={styles.policy}
         onPress={() => {
           navigation.navigate('policiesDetails', item.policy);
-          // navigation.navigate('practice');
         }}>
         <View style={styles.request}>
           <View style={styles.titleContainer}>

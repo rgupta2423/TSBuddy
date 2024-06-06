@@ -23,10 +23,9 @@ import LoginUnCheck from 'assets/mipmap/loginUncheck.imageset/uncheck.png';
 import LoginCheck from 'assets/mipmap/loginCheck.imageset/check.png';
 import {guestLoginStatus} from './LoginSlice';
 import {getUserToken, setIsRemeber, setBiometricEnable} from './LoginSlice';
-import LoadingScreen from 'component/LoadingScreen/LoadingScreen';
 import {useSelector} from 'react-redux';
-import {COPY_RIGHT, GUEST_LOGIN, REMEMBER_ME, ERROR} from 'utils/string';
-import ShowAlert from 'customComponents/CustomError';
+import {COPY_RIGHT, GUEST_LOGIN, REMEMBER_ME} from 'utils/string';
+import Loader from 'component/loader/Loader';
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
   // const [isAuth, setIsAuth] = useState(false);
@@ -34,8 +33,9 @@ const Login = ({navigation}) => {
   // const [showBiomatricModal, setshowBiomatricModal] = useState(true);
   const [isLoading, setLoading] = useState(false);
 
-  const [username, setUserName] = useState('jain.rajiv@thinksys.com');
+  const [username, setUserName] = useState('joshi.vithika@thinksys.com');
   const [password, setPassword] = useState('Thinksys@123');
+  const [error, setError] = useState(null);
 
   const {isRemember} = useSelector(state => state.auth);
   // const {bioMetricEnable} = useSelector(state => state.auth);
@@ -90,13 +90,14 @@ const Login = ({navigation}) => {
       setLoading(true);
       let result = await dispatch(getUserToken({username, password}));
       if (result?.error) {
-        ShowAlert({
-          messageHeader: ERROR,
-          messageSubHeader: result.error?.message,
-          buttonText: 'CLOSE',
-          dispatch,
-          navigation,
-        });
+        setError(result.error?.message);
+        // ShowAlert({
+        //   messageHeader: ERROR,
+        //   messageSubHeader: result.error?.message,
+        //   buttonText: 'CLOSE',
+        //   dispatch,
+        //   navigation,
+        // });
       } else {
         const {refreshToken} = result?.payload?.data || {};
         await AsyncStorage.setItem(
@@ -120,7 +121,7 @@ const Login = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      {isLoading ? <LoadingScreen /> : null}
+      {isLoading ? <Loader /> : null}
 
       {/* {isLoading ? (
         <View style={styles.loaderContainer}>
@@ -221,6 +222,7 @@ const Login = ({navigation}) => {
           </View>
           {/* )}
         /> */}
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
           <View style={styles.passwordView}>
             {/* <TouchableOpacity>
               <Text style={styles.forgotPasswordText}>{FORGOT_PASSWORD}</Text>
@@ -245,14 +247,13 @@ const Login = ({navigation}) => {
               <Text style={styles.loginText}>Login</Text>
             </View>
           </TouchableOpacity>
-          {/* //closing  */}
-          <Text style={styles.orText}>OR</Text>
+          {/* <Text style={styles.orText}>OR</Text>
           <TouchableOpacity
             onPress={() => {
               dispatch(guestLoginStatus(true));
             }}>
             <Text style={styles.guestLoginText}>{GUEST_LOGIN}</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         {/* {Platform.OS === 'android' && bioMetricEnable ? (
           <TouchableOpacity onPress={enableTouchId}>

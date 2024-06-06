@@ -1,19 +1,36 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {FlatList, Pressable, Image, SafeAreaView} from 'react-native';
+import {
+  FlatList,
+  Pressable,
+  Image,
+  SafeAreaView,
+  Platform,
+  Text,
+  View,
+} from 'react-native';
+import Modal from 'react-native-modal';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {
+  DatePickerModal,
+  registerTranslation,
+  en,
+} from 'react-native-paper-dates';
+registerTranslation('en-GB', en);
 import styles from '../screens/leaves/LeaveStyles';
 import {getLeaveDetails, getResourcesEmployeesLeaves} from 'redux/homeSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {MonthImages} from 'assets/monthImage/MonthImage';
 import {LeaveDetailsScreen, LeaveApplyScreen} from 'navigation/Route';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import Loader from 'component/LoadingScreen/LoadingScreen';
+// import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import ShowAlert from 'customComponents/CustomError';
 import {ERROR} from 'utils/string';
 import LeavesListItem from './LeavesListItem';
 import {renderNoLeaves} from 'utils/utils';
-
+import Loader from 'component/loader/Loader';
+import CrossIcon from 'assets/crossIcon/crossIcon.svg';
+import {Colors} from 'colors/Colors';
 const LeavesList = props => {
   const {
     fromResource,
@@ -33,11 +50,18 @@ const LeavesList = props => {
   const flatListRef = useRef(null);
   const navigation = useNavigation();
 
-  const [filterCalenderOpen, setFilterCalenderOpen] = useState(false);
-  const [filteredSelectedDate, setFilteredSelectedDate] = useState(null);
+  // const [startFilterCalenderOpen, setStartFilterCalenderOpen] = useState(false);
+  // const [endFilterCalenderOpen, setEndFilterCalenderOpen] = useState(false);
+
+  const [filteredStartDate, setFilteredStartDate] = useState(null);
+  const [filteredEndDate, setFilteredEndDate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [employeeLeaves, setEmployeesLeaves] = useState([]);
+  const [filterData, setFilter] = useState([]);
+  const [showCalendarModalAndroid, setCalendarModalAndroid] = useState(false);
+  const [showCalendarModal, setCalendarModal] = useState(false);
 
+  console.log('filterData', filterData.length);
   useEffect(() => {
     if (isFocussed && flatListRef.current) {
       flatListRef.current.scrollToOffset({offset: 0, animated: true});
@@ -104,6 +128,7 @@ const LeavesList = props => {
           fromLeaveDetails && fromLeaveDetails(openLeaves);
           // setEmployeesLeaves(fromResource ? resourceLeaves : empLeaves);
           setEmployeesLeaves(sortLeaveData);
+          setFilter(sortLeaveData);
           setLoading(false);
           let count = 0;
           leavesData?.payload?.employeeLeaves?.forEach(element => {
@@ -154,14 +179,17 @@ const LeavesList = props => {
   };
 
   const renderItem = ({item}) => {
-    if (filteredSelectedDate) {
-      const shouldRender =
-        filteredSelectedDate?.getTime() >= new Date(item?.fromDate).getTime();
+    // if (filteredStartDate && filteredEndDate) {
+    //   // const shouldRender =
+    //   //   filteredStartDate?.getTime() >= new Date(item?.fromDate).getTime();
+    //   const shouldRender =
+    //     new Date(item?.fromDate) > filteredStartDate &&
+    //     new Date(item?.fromDate) < filteredEndDate;
+    //   if (!shouldRender) {
+    //     return null;
+    //   }
+    // }
 
-      if (!shouldRender) {
-        return null;
-      }
-    }
     return (
       <LeavesListItem
         item={item}
@@ -170,45 +198,181 @@ const LeavesList = props => {
     );
   };
 
+  const onDismiss = React.useCallback(() => {
+    setCalendarModalAndroid(false);
+  }, [setCalendarModalAndroid]);
+
+  const onConfirm = React.useCallback(
+    ({startDate, endDate}) => {
+      setFilteredStartDate(startDate);
+      setFilteredEndDate(endDate);
+      setCalendarModalAndroid(false);
+      const data = employeeLeaves?.filter(
+        item =>
+          new Date(item?.fromDate) > startDate &&
+          new Date(item?.fromDate) < endDate,
+      );
+      setFilter(data);
+    },
+    [employeeLeaves],
+  );
+
   if (loading) {
     return <Loader />;
   }
 
+  const applyCalendarRange = () => {
+    setCalendarModal(false);
+    if (filteredStartDate && filteredEndDate) {
+      const data = employeeLeaves?.filter(
+        item =>
+          new Date(item?.fromDate) > filteredStartDate &&
+          new Date(item?.fromDate) < filteredEndDate,
+      );
+      setFilter(data);
+    } else {
+      setFilter(employeeLeaves);
+    }
+  };
+
   return (
     <>
       <SafeAreaView style={styles.mainContainerExcludeHeader}>
+        <View style={styles.resetDateButtonContainer}>
+          <Pressable
+            style={styles.filterResetButton}
+            onPress={() => {
+              setFilter(employeeLeaves);
+              setFilteredEndDate(null);
+              setFilteredStartDate(null);
+            }}>
+            <Text style={styles.resetText}>Reset</Text>
+          </Pressable>
+        </View>
+
         {isGuestLogin ? (
           renderNoLeaves({styles, message: 'No Leaves Applied.'})
-        ) : employeeLeaves?.length > 0 ? (
+        ) : filterData?.length > 0 ? (
           <FlatList
             ref={flatListRef}
             showsVerticalScrollIndicator={false}
-            data={employeeLeaves}
+            data={filterData}
             renderItem={renderItem}
             keyExtractor={(_, index) => index}
           />
         ) : (
           renderNoLeaves({styles, message: 'No Leaves Applied.'})
         )}
-        <DateTimePickerModal
-          isVisible={filterCalenderOpen}
-          mode="date"
-          onConfirm={date => {
-            setFilteredSelectedDate(date);
-            setFilterCalenderOpen(false);
-          }}
-          onCancel={() => {
-            setFilterCalenderOpen(false);
-          }}
-        />
-
+        {/* {startFilterCalenderOpen ? (
+          <DateTimePickerModal
+            isVisible={startFilterCalenderOpen}
+            mode="date"
+            onConfirm={date => {
+              setFilteredStartDate(date);
+              setStartFilterCalenderOpen(false);
+              setEndFilterCalenderOpen(true);
+            }}
+            onCancel={() => {
+              setStartFilterCalenderOpen(false);
+            }}
+          />
+        ) : null}
+        {endFilterCalenderOpen ? (
+          <DateTimePickerModal
+            isVisible={endFilterCalenderOpen}
+            key={endFilterCalenderOpen}
+            mode="date"
+            onConfirm={date => {
+              setFilteredEndDate(date);
+              setEndFilterCalenderOpen(false);
+            }}
+            onCancel={() => {
+              setEndFilterCalenderOpen(false);
+            }}
+          />
+        ) : null} */}
         <Pressable
           onPress={() => {
-            setFilterCalenderOpen(true);
+            // setStartFilterCalenderOpen(true);
+            if (Platform.OS === 'ios') {
+              setCalendarModal(true);
+            } else {
+              setCalendarModalAndroid(true);
+            }
           }}
           style={styles.filterButton}>
           <Image source={MonthImages.filterIcon2x} style={styles.filterIcon} />
         </Pressable>
+        <DatePickerModal
+          locale={'en-GB'}
+          mode="range"
+          visible={showCalendarModalAndroid}
+          onDismiss={onDismiss}
+          dates={new Date()}
+          onConfirm={onConfirm}
+          inputFormat="DD/MM/YYYY"
+          saveLabel="Apply" // optional
+          label="Select range" // optional
+          startLabel="From" // optional
+          endLabel="To" // optional
+        />
+        <Modal isVisible={showCalendarModal} style={styles.filterCalendarModal}>
+          <View style={styles.calendarModalContainer}>
+            <View style={styles.calendarSubContainer}>
+              <View style={styles.filterCalendarsModalHeader}>
+                <Pressable
+                  onPress={() => {
+                    setCalendarModal(false);
+                  }}>
+                  <CrossIcon
+                    height={30}
+                    width={30}
+                    color={Colors.black}
+                    style={styles.crossIcon}
+                  />
+                </Pressable>
+                {/* <Pressable
+                  style={styles.filterResetButton}
+                  onPress={() => {
+                    setFilteredEndDate(null);
+                    setFilteredStartDate(null);
+                  }}>
+                  <Text style={styles.resetText}>Reset</Text>
+                </Pressable> */}
+              </View>
+              <Text style={styles.calendarTitleText}>From</Text>
+              <RNDateTimePicker
+                testID="dateTimePicker"
+                value={filteredStartDate || new Date()}
+                mode={'date'}
+                display={'inline'}
+                // minimumDate={firstDay}
+                onChange={(event, selectedDate) => {
+                  setFilteredStartDate(selectedDate);
+                }}
+              />
+              <Text style={styles.calendarTitleText}>To</Text>
+              <RNDateTimePicker
+                minimumDate={filteredStartDate}
+                testID="dateTimePicker"
+                value={filteredEndDate || new Date()}
+                // maximumDate={filteredStartDate}
+                mode={'date'}
+                display={'inline'}
+                // is24Hour={true}
+                // showTime={{ use12Hours: true, format: "HH:mm a" }}
+                onChange={(event, selectedDate) => {
+                  setFilteredEndDate(selectedDate);
+                }}
+              />
+            </View>
+            <Pressable onPress={applyCalendarRange}>
+              <View style={styles.actionSheetBtnContainer}>
+                <Text style={styles.actionSheetBtnText}>Apply</Text>
+              </View>
+            </Pressable>
+          </View>
+        </Modal>
       </SafeAreaView>
     </>
   );

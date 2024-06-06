@@ -26,9 +26,11 @@ const styles = StyleSheet.create({
   request: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    flex: 1,
   },
   appliedRequestsLeft: {
     flexDirection: 'row',
+    flex: 8,
   },
   noDataFoundText: {
     fontFamily: FontFamily.RobotoMedium,
@@ -59,6 +61,7 @@ const styles = StyleSheet.create({
   datesContainer: {
     marginLeft: 20,
     marginTop: 4,
+    flex: 1,
   },
   dates: {
     fontSize: 15,
@@ -68,19 +71,23 @@ const styles = StyleSheet.create({
   },
   reguCont: {
     flexDirection: 'row',
+    flex: 1,
   },
   reguText: {
     fontSize: 11,
     color: Colors.lightGray1,
+    // flex: 1,
   },
   reguTitleText: {
     fontSize: 12,
     color: Colors.lightGray1,
     fontFamily: FontFamily.RobotoMedium,
+    flex: 1,
   },
   statusContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 2,
   },
   iconContainer: {
     justifyContent: 'center',

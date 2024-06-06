@@ -72,6 +72,7 @@ import ApplyLeaveByManager from 'screens/LeaveApplicationManager/ApplyLeaveByMan
 import ApplyWFHByManager from 'screens/LeaveApplicationManager/ApplyWFHByManager';
 import LeaveAllocation from 'screens/LeaveAllocation/RequestLeaveAllocation';
 import AllocateLeave from 'screens/LeaveAllocation/AllocateLeave';
+import HeaderTabsArrow from 'component/header/HeaderTabsArrow';
 
 const Drawer = createDrawerNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -83,14 +84,16 @@ const LeavesAllocationStack = createNativeStackNavigator();
 const SalarySlipStack = createNativeStackNavigator();
 const ResourcesStack = createNativeStackNavigator();
 const AllAttendanceStack = createNativeStackNavigator();
+const CalendarStack = createNativeStackNavigator();
 const LunchRequestsStack = createNativeStackNavigator();
 const ApplyWfhStack = createNativeStackNavigator();
 const PoliciesStack = createNativeStackNavigator();
 const EmployeeHandbookStack = createNativeStackNavigator();
 const LeaveApplicationStack = createNativeStackNavigator();
 const DailyReportsStack = createNativeStackNavigator();
+const CombineStack = createNativeStackNavigator();
 
-const drawerOption = ({
+export const drawerOption = ({
   label,
   navigation,
   showDrawer = true,
@@ -464,6 +467,19 @@ const ResourcesStackScreen = ({navigation}) => {
     </ResourcesStack.Navigator>
   );
 };
+
+const CalendarNavigator = () => {
+  return (
+    <CalendarStack.Navigator screenOptions={{headerShown: false}}>
+      <CalendarStack.Screen
+        name="CalendarMain"
+        component={HeaderTabsArrow}
+        options={{headerShown: false}}
+      />
+    </CalendarStack.Navigator>
+  );
+};
+
 const AllAttendanceNavigator = () => {
   return (
     <AllAttendanceStack.Navigator screenOptions={{headerShown: false}}>
@@ -473,6 +489,33 @@ const AllAttendanceNavigator = () => {
         options={{headerShown: false}}
       />
     </AllAttendanceStack.Navigator>
+  );
+};
+
+const CombineLeaveNavigator = () => {
+  return (
+    <CombineStack.Navigator screenOptions={{headerShown: false}}>
+      <CombineStack.Screen
+        name="Attendence"
+        component={AttendenceStackScreen}
+        options={{headerShown: false}}
+      />
+      <CombineStack.Screen
+        name="Leaves"
+        component={LeavesStackScreen}
+        options={{headerShown: false}}
+      />
+      <CombineStack.Screen
+        name="LeaveAllocation"
+        component={LeaveAllocationStackNavigator}
+        options={{headerShown: false}}
+      />
+      <CombineStack.Screen
+        name="ApplyWFH"
+        component={ApplyWfhStackScreen}
+        options={{headerShown: false}}
+      />
+    </CombineStack.Navigator>
   );
 };
 
@@ -503,9 +546,9 @@ function DrawerNavigator({navigation}) {
           backgroundColor: Colors.darkBlue,
           height: 55,
         },
-        headerTintColor: Colors.white, //Set Header text color
+        headerTintColor: Colors.white,
         headerTitleStyle: {
-          fontWeight: 'bold', //Set Header text style
+          fontWeight: 'bold',
         },
 
         activeTintColor: Colors.white,
@@ -531,21 +574,24 @@ function DrawerNavigator({navigation}) {
       {isLeaveApprover ? (
         <Drawer.Screen name="Resources" component={ResourcesStackScreen} />
       ) : null}
-      <Drawer.Screen
+      {token ? (
+        <Drawer.Screen name="Calendar" component={CalendarNavigator} />
+      ) : null}
+      {/* <Drawer.Screen
         options={{unmountOnBlur: true}}
         name="Attendence"
         component={AttendenceStackScreen}
-      />
-      <Drawer.Screen name="Leaves" component={LeavesStackScreen} />
-      {token ? (
+      /> */}
+      {/* <Drawer.Screen name="Leaves" component={LeavesStackScreen} /> */}
+      {/* {token ? (
         <Drawer.Screen
           name="LeaveAllocation"
           component={LeaveAllocationStackNavigator}
         />
-      ) : null}
-      {token ? (
+      ) : null} */}
+      {/* {token ? (
         <Drawer.Screen name="applyWfh" component={ApplyWfhStackScreen} />
-      ) : null}
+      ) : null} */}
 
       {isLeaveApprover ? (
         <Drawer.Screen
@@ -561,7 +607,7 @@ function DrawerNavigator({navigation}) {
       ) : null}
 
       <Drawer.Screen name="Holidays" component={HolidaysStackScreen} />
-      <Drawer.Screen name="Salary Slip" component={SalarySlipScreen} />
+      {/* <Drawer.Screen name="Salary Slip" component={SalarySlipScreen} /> */}
       {isHRManager ? (
         <Drawer.Screen name="DailyReports" component={DailyReportsScreen} />
       ) : null}

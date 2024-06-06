@@ -5,9 +5,14 @@ import {useIsFocused} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import jwt_decode from 'jwt-decode';
 import LeavesList from 'reusableComponents/LeavesList';
-import {LeaveApplyScreen} from 'navigation/Route';
-import CustomHeader from 'navigation/CustomHeader';
+import {
+  AttendenceScreen,
+  LeaveAllocationSeparate,
+  LeaveApplyScreen,
+} from 'navigation/Route';
+// import CustomHeader from 'navigation/CustomHeader';
 import styles from './LeavesStyles';
+import CombineHeader from 'component/header/CombineHeader';
 
 const Leaves = ({navigation}) => {
   const {userToken: token} = useSelector(state => state.auth);
@@ -31,16 +36,29 @@ const Leaves = ({navigation}) => {
       applyLeave: true,
     });
   };
-
+  const leftClickHandler = () => {
+    navigation.navigate(AttendenceScreen);
+  };
+  const rightClickHandler = () => {
+    navigation.navigate(LeaveAllocationSeparate);
+  };
   return (
     <>
-      <CustomHeader
+      <CombineHeader
+        isFirstComponent={false}
+        isLastComponent={false}
+        navigation={navigation}
+        title="Leaves"
+        rightClickHandler={rightClickHandler}
+        leftClickHandler={leftClickHandler}
+      />
+      {/* <CustomHeader
         showDrawerMenu={true}
         title="Leaves"
         navigation={navigation}
         isHome={false}
         showHeaderRight={true}
-      />
+      /> */}
       <SafeAreaView style={styles.mainContainer}>
         <Pressable onPress={applyForLeave} style={styles.applyLeaveButton}>
           <View style={styles.applyLeaveTextContainer}>

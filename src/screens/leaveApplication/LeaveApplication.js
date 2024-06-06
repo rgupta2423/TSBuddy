@@ -94,6 +94,7 @@ const LeaveApplication = ({navigation}) => {
               ...approver,
             },
             selectedType: type,
+            isRefreshing,
             isHR: isHRManager,
           }),
         );
@@ -125,10 +126,12 @@ const LeaveApplication = ({navigation}) => {
   useEffect(() => {
     if (isFocussed) {
       (async () => {
-        await getLeavesForManager(LEAVE, true);
+        console.log('selectedType', selectedType);
+        await getLeavesForManager(selectedType, true);
+        // getLeavesForManager(selectedType, true);
       })();
     }
-  }, [isFocussed]);
+  }, [isFocussed, selectedType]);
 
   const renderMoreLeaves = async () => {
     if (
@@ -143,7 +146,10 @@ const LeaveApplication = ({navigation}) => {
     setShowTextInput(false);
     setSelectedType(type);
 
-    if (applicationData[type]?.data?.length === 0) {
+    if (
+      applicationData[type]?.data?.length === 0 ||
+      type === LEAVE_ALLOCATION
+    ) {
       await getLeavesForManager(type);
     }
   };
@@ -191,7 +197,11 @@ const LeaveApplication = ({navigation}) => {
       />
       {showTextInput && (
         <View style={styles.textInputContainer}>
-          <TextInput onChangeText={onEnterValue} style={styles.textInput} />
+          <TextInput
+            value={searchedName}
+            onChangeText={onEnterValue}
+            style={styles.textInput}
+          />
           <CustomButton title="Search" onPress={onSearchUser} />
         </View>
       )}

@@ -7,8 +7,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {GetDailyAttendanceByEmpId} from 'redux/homeSlice';
 import ShowAlert from 'customComponents/CustomError';
 import {ERROR} from 'utils/string';
-import Loader from 'component/LoadingScreen/LoadingScreen';
 import {renderNoLeaves} from 'utils/utils';
+import Loader from 'component/loader/Loader';
 
 const AttendenceTab = ({employeeID, employeeName}) => {
   const dispatch = useDispatch();

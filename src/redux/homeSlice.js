@@ -53,7 +53,8 @@ const initialState = {
 
 const breakfast = 'breakfast';
 const lunch = 'lunch';
-const snacks = 'snacks';
+const snacks = 'evening snack';
+// const snacks = 'snacks';
 
 // =============================================
 
@@ -2264,6 +2265,7 @@ const homeSlice = createSlice({
       state.salarySlipDataError = action.payload;
     });
     builder.addCase(getEmployeeShift.fulfilled, (state, action) => {
+      console.log('state:::::', action.payload);
       state.employeeShift = action.payload;
       state.employeeShiftError = undefined;
     });

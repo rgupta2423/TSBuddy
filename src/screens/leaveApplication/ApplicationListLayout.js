@@ -72,11 +72,6 @@ const ApplicationListLayout = ({
       rmStatus?.toLowerCase() === DISMISSED?.toLowerCase() ||
       rmStatus?.toLowerCase() === REJECTED?.toLowerCase();
 
-    const leaveAllocationIsApproved =
-      hrStatus?.toLowerCase() === APPROVED.toLowerCase() &&
-      hodStatus?.toLowerCase() === APPROVED.toLowerCase() &&
-      rmStatus.toLowerCase() === APPROVED.toLowerCase();
-
     return (
       <Pressable
         style={styles.listItemMainContainer}
@@ -117,7 +112,7 @@ const ApplicationListLayout = ({
               <View style={styles.reguCont}>
                 <Text style={styles.reguText}>
                   {isRegularisation
-                    ? 'Attendance Date'
+                    ? 'Attendance Date '
                     : isLeaveAllocation
                     ? 'Leave Type:'
                     : 'Applied on:'}{' '}

@@ -117,7 +117,10 @@ export default StyleSheet.create({
     borderWidth: 1,
     marginTop: 8,
     justifyContent: 'center',
-    zIndex: 999,
+    zIndex: 0,
+  },
+  negativeZIndex: {
+    zIndex: -1,
   },
   leaveApproverText: {
     fontWeight: 'bold',

@@ -8,6 +8,7 @@ import {FontFamily, FontSize} from 'constants/fonts';
 export default StyleSheet.create({
   barChartStyle: {
     marginVertical: 10,
+    marginLeft: -12,
   },
   mainContainer: {paddingHorizontal: 20},
   container: {
@@ -32,12 +33,13 @@ export default StyleSheet.create({
   },
   graphsContainer: {
     flexDirection: 'row',
+    overflow: 'hidden',
   },
   earnedLeaveText: {
     textAlign: 'center',
     position: 'absolute',
     top: 200,
-    left: wp(19),
+    left: wp(10),
     fontSize: 16,
     fontFamily: FontFamily.RobotoLight,
     marginTop: hp(0.5),
@@ -47,7 +49,7 @@ export default StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     top: 200,
-    right: 10,
+    left: 32,
     fontSize: 16,
     fontFamily: FontFamily.RobotoLight,
     marginTop: hp(0.5),
@@ -126,5 +128,54 @@ export default StyleSheet.create({
     fontSize: 16,
     color: Colors.lightBlue,
     marginVertical: 4,
+  },
+
+  //
+
+  containerGraph: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  yAxis: {
+    justifyContent: 'space-between',
+    paddingRight: 8,
+  },
+  yAxisLabel: {
+    fontSize: 12,
+    color: '#333',
+  },
+  barGraph: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  barContainer: {
+    marginRight: 8,
+  },
+  bar: {
+    width: 24,
+    backgroundColor: 'blue',
+    borderRadius: 4,
+  },
+  barLabel: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#333',
+    textAlign: 'center',
+  },
+  xAxis: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 8,
+    marginTop: 8,
+    width: '100%',
+  },
+  xAxisLabel: {
+    fontSize: 12,
+    color: '#333',
+    width: 24,
+    textAlign: 'center',
   },
 });

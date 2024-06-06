@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   tabContainer: {
-    paddingHorizontal: 14,
+    paddingHorizontal: 10,
     paddingVertical: 10,
   },
   middleType: {
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   },
   textColorWhite: {
     color: Colors.white,
+    fontSize: FontSize.h13,
   },
   listContainer: {
     flex: 1,

@@ -5,6 +5,7 @@ import {
   Text,
   Image,
   ImageBackground,
+  ScrollView,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import styles from './salarySlipStyle';
@@ -29,7 +30,6 @@ const SalarySlip = ({navigation}) => {
   const {isGuestLogin} = useSelector(state => state.auth);
 
   const [salarySlips, setSalarySlips] = useState([]);
-  console.log('salarySlips:', salarySlips);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -100,59 +100,65 @@ const SalarySlip = ({navigation}) => {
 
         {!isAuthenticated ? (
           <SalarSlipModal submitPassword={submitPassword} />
-        ) : (
-          salarySlips?.map((salarySlip, ind) => {
-            const month = salarySlip.month;
-            const fiscalYear = salarySlip.fiscalYear;
-            const [firstYear, secondYear] = fiscalYear.split('-');
+        ) : salarySlips.length ? (
+          <ScrollView>
+            {salarySlips?.map((salarySlip, ind) => {
+              const month = salarySlip.month;
+              const fiscalYear = salarySlip.fiscalYear;
+              const [firstYear, secondYear] = fiscalYear.split('-');
 
-            const finalSalaryYear = month > 3 ? firstYear : secondYear;
+              const finalSalaryYear = month > 3 ? firstYear : secondYear;
 
-            return (
-              <View key={ind} style={styles.ViewForMOnth}>
-                <View style={styles.backgroundImageView}>
-                  <TouchableOpacity
-                    style={styles.salary}
-                    onPress={() => {
-                      navigation.navigate(SalaryDetailsScreen, {
-                        ...salarySlip,
-                        monthImage: monthImages[salarySlip.month].monthImage,
-                      });
-                    }}>
-                    <ImageBackground
-                      resizeMode="cover"
-                      imageStyle={styles.imageBackground}
-                      source={monthImages[salarySlip.month].monthImage}
-                      style={styles.backGroundImage}>
-                      {/* <View style={styles.smalllImageView}>
+              return (
+                <View key={ind} style={styles.ViewForMOnth}>
+                  <View style={styles.backgroundImageView}>
+                    <TouchableOpacity
+                      style={styles.salary}
+                      onPress={() => {
+                        navigation.navigate(SalaryDetailsScreen, {
+                          ...salarySlip,
+                          monthImage: monthImages[salarySlip.month].monthImage,
+                        });
+                      }}>
+                      <ImageBackground
+                        resizeMode="cover"
+                        imageStyle={styles.imageBackground}
+                        source={monthImages[salarySlip.month].monthImage}
+                        style={styles.backGroundImage}>
+                        {/* <View style={styles.smalllImageView}>
                   <Image
                     source={salarySlip.monthIcon}
                     style={styles.image}
                   />
                 </View> */}
-                      <Text style={styles.monthText}>
-                        {salarySlip.monthName}
-                      </Text>
-                    </ImageBackground>
-                  </TouchableOpacity>
-                </View>
+                        <Text style={styles.monthText}>
+                          {salarySlip.monthName}
+                        </Text>
+                      </ImageBackground>
+                    </TouchableOpacity>
+                  </View>
 
-                {/* <TouchableOpacity
+                  {/* <TouchableOpacity
                   onPress={() => {
                     navigation.navigate(SalaryPDFDownloadScreen, salarySlip);
                   }}> */}
-                <View style={styles.downloadView}>
-                  <View style={styles.downloadTextView}>
-                    {/* <Text style={styles.downloadtext}>Download</Text> */}
-                    <Text style={styles.downloadtext}>{`${
-                      monthImages[salarySlip.month].monthName
-                    }-${finalSalaryYear}`}</Text>
+                  <View style={styles.downloadView}>
+                    <View style={styles.downloadTextView}>
+                      {/* <Text style={styles.downloadtext}>Download</Text> */}
+                      <Text style={styles.downloadtext}>{`${
+                        monthImages[salarySlip.month].monthName
+                      }-${finalSalaryYear}`}</Text>
+                    </View>
                   </View>
+                  {/* </TouchableOpacity> */}
                 </View>
-                {/* </TouchableOpacity> */}
-              </View>
-            );
-          })
+              );
+            })}
+          </ScrollView>
+        ) : (
+          <View style={styles.noSalaryContainer}>
+            <Text style={styles.noSalaryText}>No Salary Slips Found.</Text>
+          </View>
         )}
 
         <DateTimePickerModal

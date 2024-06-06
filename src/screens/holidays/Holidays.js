@@ -6,6 +6,7 @@ import {
   FlatList,
   Text,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import {
   heightPercentageToDP as hp,
@@ -19,9 +20,11 @@ import {DATE_FORMAT, PAST_HOLIDAYS, UPCOMING_HOLIDAYS} from 'constants/strings';
 import {guestHolidaysData} from 'guestData';
 import CustomHeader from 'navigation/CustomHeader';
 import {sortByFiscalYear} from 'utils/utils';
+import {FontSize} from 'constants/fonts';
 
 const Holidays = ({navigation}) => {
   const [holidaysShowModal, holidaysSetShowModal] = useState(false);
+  const [holidaysSelectedData, selectedModalData] = useState({});
   const [HolidaysData, setHolidaysData] = useState({});
   const dispatch = useDispatch();
   const {isGuestLogin: isGuestLogin, userToken: token} = useSelector(
@@ -30,7 +33,6 @@ const Holidays = ({navigation}) => {
   const {holidayData: holidaysData, holidayDataLoading: isLoading} =
     useSelector(state => state.home);
   const [isRefresh, setRefresh] = useState(false);
-
   const renderItem = useCallback(
     (
       item,
@@ -46,8 +48,18 @@ const Holidays = ({navigation}) => {
 
       return (
         <TouchableOpacity
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            borderRadius: 5,
+            marginVertical: hp(0.5),
+            marginHorizontal: wp(1),
+            backgroundColor: Colors.skyColor,
+            shadowOpacity: 0.1,
+          }}
           onPress={() => {
             holidaysSetShowModal(true);
+            selectedModalData(HolidaysData);
             setHolidaysData(prevHolidayData => ({
               ...prevHolidayData,
               description,
@@ -55,6 +67,7 @@ const Holidays = ({navigation}) => {
               newDateFormate,
               holidaysSetShowModal,
             }));
+
             // setHolidaysData({
             //   ...HolidaysData,
             //   description,
@@ -63,58 +76,39 @@ const Holidays = ({navigation}) => {
             //   holidaysSetShowModal,
             // });
           }}>
-          {holidaysShowModal ? (
-            <HolidayModal
-              key={new Date()}
-              HolidaysData={HolidaysData}
-              holidaysShowModal={holidaysShowModal}
-            />
-          ) : null}
           <View
-            // style={styles.flatelistView}
-            style={{
-              flexDirection: 'row',
-              borderRadius: 5,
-              marginVertical: hp(0.5),
-              marginHorizontal: wp(1),
-              backgroundColor: Colors.skyColor,
-              shadowOpacity: 0.1,
-            }}>
-            <View
-              //style={styles.flatelistView1}
+            //style={styles.flatelistView1}
 
+            style={{
+              flex: 4,
+              backgroundColor: getPastHoliday(holidayDate)
+                ? Colors.colorDodgerBlue2
+                : Colors.grey,
+
+              justifyContent: 'center',
+              borderTopLeftRadius: 5,
+              borderBottomLeftRadius: 5,
+              shadowOpacity: 0.1,
+              paddingHorizontal: 8,
+              paddingVertical: 25,
+            }}>
+            <Text
               style={{
-                flex: 1,
-                backgroundColor: getPastHoliday(holidayDate)
-                  ? Colors.colorDodgerBlue2
-                  : Colors.grey,
-                paddingHorizontal: wp(2),
-                paddingVertical: hp(1),
-                justifyContent: 'center',
-                borderTopLeftRadius: 5,
-                borderBottomLeftRadius: 5,
-                shadowOpacity: 0.1,
+                textAlign: 'center',
+                color: Colors.white,
+                fontSize: FontSize.h16,
               }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  color: Colors.white,
-                  fontSize: 18,
-                }}>
-                {newDateFormate}
-              </Text>
-            </View>
-            <View style={styles.flatelistView2}>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  color: getPastHoliday(holidayDate)
-                    ? Colors.black
-                    : Colors.grey,
-                }}>
-                {description}
-              </Text>
-            </View>
+              {newDateFormate}
+            </Text>
+          </View>
+          <View style={styles.flatelistView2}>
+            <Text
+              style={{
+                fontWeight: 'bold',
+                color: getPastHoliday(holidayDate) ? Colors.black : Colors.grey,
+              }}>
+              {description}
+            </Text>
           </View>
         </TouchableOpacity>
       );
@@ -168,6 +162,15 @@ const Holidays = ({navigation}) => {
             <Text> {UPCOMING_HOLIDAYS}</Text>
           </View>
         </View>
+        {holidaysShowModal ? (
+          <ScrollView style={{flex: 1}} contentContainerStyle={{flexGrow: 1}}>
+            <HolidayModal
+              key={new Date()}
+              HolidaysData={HolidaysData}
+              holidaysShowModal={holidaysShowModal}
+            />
+          </ScrollView>
+        ) : null}
       </SafeAreaView>
     </>
   );

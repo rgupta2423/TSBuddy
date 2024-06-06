@@ -5,9 +5,25 @@ import {
 } from 'utils/Responsive';
 import {Colors} from 'colors/Colors';
 export default StyleSheet.create({
+  mainContainer: {
+    flexDirection: 'row',
+    borderRadius: 5,
+    marginVertical: hp(0.5),
+    marginHorizontal: wp(1),
+    backgroundColor: Colors.skyColor,
+    shadowOpacity: 0.1,
+  },
+  itemLeft: {
+    flex: 1,
+    paddingHorizontal: wp(2),
+    paddingVertical: hp(1),
+    justifyContent: 'center',
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+    shadowOpacity: 0.1,
+  },
   container: {
     paddingHorizontal: wp(10),
-    justifyContent: 'flex-end',
     height: hp(7),
     borderTopWidth: 1,
     flexDirection: 'row',
@@ -34,13 +50,14 @@ export default StyleSheet.create({
     shadowOpacity: 0.1,
   },
   flatelistView2: {
-    flex: 3,
+    flex: 7,
     backgroundColor: Colors.white,
-    paddingHorizontal: wp(2),
-    paddingVertical: hp(1),
+
     justifyContent: 'center',
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 25,
   },
   buttomView: {
     backgroundColor: Colors.grey,

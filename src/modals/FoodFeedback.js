@@ -77,7 +77,7 @@ const FoodFeedback = ({modalData}) => {
   const handleSubmit = async () => {
     const bodyToSend = {
       dailyMenuId: dailyMenuID,
-      employeeId: employeeID,
+      // employeeId: employeeID,
       feedback: text,
       reaction: reaction,
       type: type,

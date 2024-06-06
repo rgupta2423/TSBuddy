@@ -1,11 +1,8 @@
 import React from 'react';
-import {Colors} from 'colors/Colors';
-import {View, Text, TouchableOpacity, Image, Alert} from 'react-native';
+import {View, Text, TouchableOpacity, Alert} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
-import ModalDropdown from 'react-native-modal-dropdown';
 import {useEffect, useState} from 'react';
 import style from './RegularzationStyles';
-import {MonthImages} from 'assets/monthImage/MonthImage';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   getAttReguarzationReason,
@@ -13,24 +10,23 @@ import {
   getWorkModeOfEmployee,
   requestForAttendanceRegularization,
 } from 'redux/homeSlice';
-import {ERROR} from 'utils/string';
+import {ERROR, LEAVE_APPROVER_FAIL_FETCH} from 'utils/string';
 import jwt_decode from 'jwt-decode';
 import CustomHeader from 'navigation/CustomHeader';
 import Loader from 'component/loader/Loader';
-import {FontFamily} from 'constants/fonts';
 import ShowAlert from 'customComponents/CustomError';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const Regularization = ({navigation, route}) => {
   const [regularizationReason, setRegularzitionReason] = useState([]);
   const [leaveApproversList, setLeaveApproversList] = useState([]);
-  // console.log('leaveApproversList:', leaveApproversList);
-  const [selectApprover, setSelectApprover] = useState('');
-  const [selectReasons, setSelectReasons] = useState('');
   const [commentText, setCommentText] = useState('');
   const [workMode, setWorkMode] = useState('');
-  const [approoverId, setApproveId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [approvers, setApprovers] = useState([]);
+  const [openLeaveApprovers, setOpenLeaveApprovers] = useState(false);
+  const [openReason, setOpenReason] = useState(false);
+  const [leaveApproversValue, setLeaveApproversValue] = useState(null);
+  const [reasonValue, setReasonValue] = useState(null);
 
   // const [dayData, setDayData] = useState([
   //   {
@@ -59,7 +55,6 @@ const Regularization = ({navigation, route}) => {
 
   const dispatch = useDispatch();
   let regReasonList = [];
-  let listOfLeaveApprover = [];
 
   useEffect(() => {
     (async () => {
@@ -67,7 +62,7 @@ const Regularization = ({navigation, route}) => {
         getAttReguarzationReason(token),
       );
       regularizationReasonList?.payload?.map(el =>
-        regReasonList?.push(el?.reason),
+        regReasonList?.push({value: el?.id, label: el?.reason}),
       );
       setRegularzitionReason(regReasonList);
       if (regularizationReasonList?.error) {
@@ -84,115 +79,52 @@ const Regularization = ({navigation, route}) => {
       const leaveApprovers = token
         ? await dispatch(getLeaveApprovers({token, employeeID}))
         : [];
-      leaveApprovers?.payload?.map(el => {
-        const firstName = el?.leaveApproverFirstName;
-        const middleName = el?.leaveApproverMiddleName;
-        const lastName = el?.leaveApproverLastName;
-
-        const userName = `${firstName ? firstName : ''} ${
-          middleName ? middleName + ' ' : ''
-        }${lastName ? lastName : ''}`;
-        listOfLeaveApprover?.push(userName);
+      const uniqueNamesSet = new Set();
+      const uniqueObjects = leaveApprovers?.payload.filter(obj => {
+        if (!uniqueNamesSet.has(obj.employeeId)) {
+          uniqueNamesSet.add(obj.employeeId);
+          return true;
+        }
+        return false;
       });
 
-      setApprovers(leaveApprovers?.payload);
-      setLeaveApproversList(listOfLeaveApprover);
+      if (!leaveApprovers.payload) {
+        alert(LEAVE_APPROVER_FAIL_FETCH);
+      }
+
+      const listOfLeaveApprovers = uniqueObjects.map(approver => {
+        return {
+          value: `${approver?.employeeId}`,
+          label: `${
+            approver.leaveApproverFirstName
+              ? approver.leaveApproverFirstName + ' '
+              : ''
+          }${
+            approver.leaveApproverMiddleName
+              ? approver.leaveApproverMiddleName + ' '
+              : ''
+          }${approver.leaveApproverLastName || ''}`,
+        };
+      });
+
+      setLeaveApproversList(listOfLeaveApprovers);
+      // setLeaveApproversValue(listOfLeaveApprovers[0].value);
     })();
 
     (async () => {
-      const workMode =
+      const getWorkMode =
         token && (await dispatch(getWorkModeOfEmployee({token, employeeID})));
-      setWorkMode(workMode.payload.workMode);
+      setWorkMode(getWorkMode.payload.workMode);
     })();
-  }, []);
-
-  const renderRow = (rowData, rowID, highlighted) => {
-    return (
-      <View
-        style={[
-          {borderBottomColor: Colors.lightGray, borderBottomWidth: 1},
-          highlighted && style.highlighted,
-        ]}>
-        <Text style={{fontSize: 16, backgroundColor: 'white'}}>{rowData}</Text>
-      </View>
-    );
-  };
-
-  const renderRightComponent = () => (
-    <View
-      style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 10,
-        paddingTop: 4,
-        position: 'absolute',
-        right: 0,
-      }}>
-      <Image
-        source={MonthImages.DropDownIcon}
-        style={{
-          height: 20,
-          width: 20,
-        }}
-      />
-    </View>
-  );
-
-  // const onSelectItem = (item, index) => {
-  //   let tempArr = [];
-  //   dayData &&
-  //     dayData?.map((i, ind) => {
-  //       if (index === ind) {
-  //         tempArr.push((i.isSelected = true));
-  //       } else {
-  //         tempArr.push((i.isSelected = false));
-  //       }
-  //     });
-  //   setSelectDay(item.type);
-  // };
-
-  // const renderItem = ({item, index}) => {
-  //   return (
-  //     <View style={{paddingHorizontal: wp(2)}} key={index}>
-  //       <Pressable
-  //         onPress={() => {
-  //           onSelectItem(item, index);
-  //         }}>
-  //         <View
-  //           style={{
-  //             flexDirection: 'row',
-  //             justifyContent: 'space-around',
-  //             width: wp(25),
-  //           }}>
-  //           <View
-  //             style={[
-  //               style.checkbox,
-  //               {
-  //                 backgroundColor: item.isSelected
-  //                   ? Colors.reddishTint
-  //                   : Colors.white,
-  //               },
-  //             ]}></View>
-  //           <Text
-  //             style={{
-  //               fontSize: 16,
-  //               color: 'black',
-  //             }}>
-  //             {item.type}
-  //           </Text>
-  //         </View>
-  //       </Pressable>
-  //     </View>
-  //   );
-  // };
+  }, [dispatch, employeeID, token]);
 
   const handleSubmit = async () => {
-    if (!selectApprover) {
+    if (!leaveApproversValue) {
       alert('Please select Leave Approver.');
       return;
     }
 
-    if (!selectReasons) {
+    if (!reasonValue) {
       alert('Please select a reason.');
       return;
     }
@@ -201,30 +133,27 @@ const Regularization = ({navigation, route}) => {
       return;
     }
 
-    // if (!selectDay) {
-    //   alert('Please select is this regularization for half or full day.');
-    //   return;
-    // }
-
     try {
       setIsLoading(true);
+
+      const body = {
+        attendanceId: attendanceId,
+        employeeId: employeeID,
+        attendanceDate: attDate,
+        reasonId: reasonValue,
+        attendanceType: 'Full day',
+        halfDayInfo: null,
+        comment: commentText,
+        mode: workMode,
+        approverId: leaveApproversValue,
+        status: 'Open',
+      };
       const requestRegularsation =
         token &&
         (await dispatch(
           requestForAttendanceRegularization({
             token,
-            body: {
-              attendanceId: attendanceId,
-              employeeId: employeeID,
-              attendanceDate: attDate,
-              reasonId: selectReasons,
-              attendanceType: 'Full day',
-              halfDayInfo: null,
-              comment: commentText,
-              mode: workMode,
-              approverId: approoverId,
-              status: 'Open',
-            },
+            body,
           }),
         ));
 
@@ -257,109 +186,39 @@ const Regularization = ({navigation, route}) => {
         showHeaderRight={false}
       />
       <View style={style.container}>
-        <View
-          style={{
-            // borderWidth: 1,
-
-            paddingVertical: 14,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: Colors.black,
-            borderRadius: 50,
-            marginBottom: 10,
-          }}>
-          <Text
-            style={{
-              fontSize: 18,
-              fontFamily: FontFamily.RobotoMedium,
-              color: Colors.white,
-            }}>
-            Date: {date}
-          </Text>
+        <View style={style.dateContainer}>
+          <Text style={style.dateText}>Date: {date}</Text>
         </View>
         <View style={style.textHeader}>
           <Text style={style.text}>Leave Approver</Text>
         </View>
 
-        <View style={style.dropdownCont}>
-          <ModalDropdown
-            style={{
-              borderWidth: 1,
-              backgroundColor: Colors.white,
-              borderRadius: 3,
-              paddingVertical: 5,
-              height: 38,
-              paddingLeft: 15,
-            }}
-            onSelect={index => {
-              setSelectApprover(leaveApproversList[index]);
-              const selectedLeaveApprover = approvers[index];
-              setApproveId(selectedLeaveApprover?.employeeId);
-            }}
-            dropdownTextHighlightStyle={{
-              color: Colors.white,
-              backgroundColor: Colors.white,
-            }}
-            isFullWidth={true}
-            showsVerticalScrollIndicator={false}
-            options={leaveApproversList}
-            dropdownStyle={{
-              width: '50%',
-              height:
-                leaveApproversList && leaveApproversList.length == 1
-                  ? 30
-                  : leaveApproversList.length == 2
-                  ? 50
-                  : 110,
-              paddingLeft: 6,
-              lineHeight: 2,
-            }}
-            renderRow={renderRow}
-            animated={true}
-            renderRightComponent={renderRightComponent}
+        <View style={[style.dropdownCont, style.leaveApproverContainer]}>
+          <DropDownPicker
+            listMode="SCROLLVIEW"
+            scrollEnabled={true}
+            placeholder={'Select Leave Approver....'}
+            open={openLeaveApprovers}
+            value={leaveApproversValue}
+            items={leaveApproversList}
+            setOpen={setOpenLeaveApprovers}
+            setValue={setLeaveApproversValue}
           />
         </View>
         <View style={style.textHeader}>
           <Text style={style.text}>Reason</Text>
         </View>
-        <View style={style.dropdownCont}>
-          <ModalDropdown
-            style={{
-              borderWidth: 1,
-              backgroundColor: Colors.white,
-              borderRadius: 3,
-              paddingVertical: 5,
-              height: 38,
-              paddingLeft: 15,
-            }}
-            onSelect={item => {
-              setSelectReasons(item + 1);
-            }}
-            renderRightComponent={renderRightComponent}
-            renderRow={renderRow}
-            dropdownTextHighlightStyle={{color: Colors.white}}
-            isFullWidth={true}
-            showsVerticalScrollIndicator={false}
-            // defaultValue={}
-            options={regularizationReason}
-            dropdownStyle={{
-              width: '50%',
-              paddingLeft: 6,
-              height:
-                regularizationReason && regularizationReason?.length == 4
-                  ? 100
-                  : 150,
-            }}
-            animated={true}
+        <View style={[style.dropdownCont, style.reasonContainer]}>
+          <DropDownPicker
+            listMode="SCROLLVIEW"
+            scrollEnabled={true}
+            placeholder={'Select Reason....'}
+            open={openReason}
+            value={reasonValue}
+            items={regularizationReason}
+            setOpen={setOpenReason}
+            setValue={setReasonValue}
           />
-        </View>
-        <View style={style.halfFullCont}>
-          {/* <FlatList
-            data={dayData}
-            renderItem={renderItem}
-            keyExtractor={item => item.type}
-            horizontal={true}
-          /> */}
         </View>
         <View style={style.textHeader}>
           <Text style={style.text}>Comment</Text>
@@ -378,28 +237,16 @@ const Regularization = ({navigation, route}) => {
             onPress={() => {
               navigation.goBack();
             }}>
-            <View
-              style={[
-                style.btn,
-                {marginRight: 10, backgroundColor: Colors.reddishTint},
-              ]}>
-              <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold'}}>
-                Cancel
-              </Text>
+            <View style={[style.btn, style.cancelBtnContainer]}>
+              <Text style={style.cancelBtnText}>Cancel</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               handleSubmit();
             }}>
-            <View
-              style={[
-                style.btn,
-                {backgroundColor: Colors.parrotGreen, marginTop: 10},
-              ]}>
-              <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold'}}>
-                Submit
-              </Text>
+            <View style={[style.btn, style.submitBtnContainer]}>
+              <Text style={style.submitBtnText}>Submit</Text>
             </View>
           </TouchableOpacity>
         </View>

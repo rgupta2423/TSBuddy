@@ -7,10 +7,14 @@ import {Colors} from 'colors/Colors';
 import {FontFamily} from 'constants/fonts';
 export default StyleSheet.create({
   mainContainerExcludeHeader: {
-    marginTop: hp(1.6),
+    // marginTop: 4,
     flex: 1,
     backgroundColor: Colors.whitishBlue,
   },
+  resetDateButtonContainer: {
+    alignItems: 'flex-end',
+  },
+
   filterButton: {
     position: 'absolute',
     bottom: hp(3),
@@ -20,6 +24,59 @@ export default StyleSheet.create({
     height: 55,
     width: 55,
     borderRadius: 25,
+  },
+  filterCalendarModal: {
+    justifyContent: 'flex-end',
+  },
+  calendarModalContainer: {
+    width: '100%',
+    alignSelf: 'center',
+    paddingHorizontal: wp(3),
+    marginBottom: hp(2),
+  },
+  calendarSubContainer: {
+    backgroundColor: Colors.white,
+    borderRadius: 12,
+    // flexDirection: 'row',
+  },
+  filterCalendarsModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 8,
+    marginVertical: 6,
+  },
+  crossIcon: {},
+  filterResetButton: {
+    borderWidth: 1,
+    borderColor: Colors.grey,
+    borderRadius: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    marginTop: 5,
+    backgroundColor: Colors.lightBlue,
+  },
+  resetText: {
+    color: Colors.white,
+  },
+  calendarTitleText: {
+    color: Colors.purple,
+    fontSize: 24,
+    fontWeight: '600',
+    marginLeft: 8,
+    marginTop: hp(2),
+  },
+  actionSheetBtnContainer: {
+    height: hp(7),
+    backgroundColor: Colors.white,
+    marginTop: hp(1),
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionSheetBtnText: {
+    fontSize: 20,
+    color: Colors.lighterBlue,
+    fontWeight: '500',
   },
   container: {
     paddingHorizontal: wp(5),

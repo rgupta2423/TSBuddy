@@ -26,6 +26,40 @@ const styles = StyleSheet.create({
     fontSize: FontSize.h16,
     fontFamily: FontFamily.RobotoMedium,
   },
+  applyLeaveButton: {
+    // paddingHorizontal: wp(5),
+    paddingVertical: hp(1.5),
+    borderWidth: 1,
+    borderColor: Colors.black,
+    marginHorizontal: wp(3),
+    display: 'flex',
+    flexDirection: 'row',
+    borderRadius: 5,
+    backgroundColor: Colors.lightGray,
+    marginVertical: hp(1),
+    alignItems: 'center',
+    paddingLeft: wp(2.5),
+    justifyContent: 'space-between',
+  },
+  applyLeaveTextContainer: {
+    borderColor: Colors.orangeColor,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+    width: 20,
+    height: 20,
+  },
+  applyLeaveAddSign: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: Colors.orangeColor,
+  },
+  leaveApplicationText: {
+    fontSize: FontSize.h12,
+    fontFamily: FontFamily.RobotoMedium,
+    color: Colors.purple,
+    textAlign: 'center',
+  },
   listItem: {
     flexDirection: 'row',
     borderRadius: 5,
@@ -71,7 +105,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   rightFirstContainer: {
-    flex: 4,
+    flex: 3.8,
   },
   leaveAppIdText: {
     fontWeight: 'bold',
@@ -84,7 +118,7 @@ const styles = StyleSheet.create({
   dismissContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 2.1,
+    flex: 2.5,
   },
   dismissButton: {
     paddingVertical: 8,

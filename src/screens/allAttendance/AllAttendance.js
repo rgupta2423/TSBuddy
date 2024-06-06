@@ -82,7 +82,7 @@ const AllAttendance = ({navigation}) => {
   const [text, setText] = useState('');
   const [searchResult, setSearchResult] = useState([]);
   const [employeeWeekOffs, setEmployeeWeekOffs] = useState([]);
-  const [attendanceDate, setAttendanceDate] = useState([]);
+  const [attendanceDate, setAttendanceDate] = useState(null);
   const [selectDate, setSelectDate] = useState({
     dateStr: 'DD-MM-YYYY',
   });
@@ -218,16 +218,32 @@ const AllAttendance = ({navigation}) => {
     setSearchResult(result);
   };
   const handleSubmitNewAttendance = async () => {
-    try {
-      const body = {
-        employeeId: selectedEmployee?.employeeId,
-        attendanceDate: attendanceDate,
-        inTime: inTime,
-        outTime: outTime,
-        totalHours: totalHours,
-        isRegularized: isChecked ? 1 : 0,
-      };
+    if (!selectedEmployee?.employeeId) {
+      alert('Please select an employee');
+      return;
+    } else if (!attendanceDate) {
+      alert('Please select an Attendance Date.');
+      return;
+    } else if (!inTime) {
+      alert('Please Select Check In Time.');
+      return;
+    } else if (!outTime) {
+      alert('Please Select Check Out Time.');
+      return;
+    } else if (totalHours === 0) {
+      alert('Check In Time and Check Out time can not be the same');
+      return;
+    }
+    const body = {
+      employeeId: selectedEmployee?.employeeId,
+      attendanceDate: attendanceDate,
+      inTime: inTime,
+      outTime: outTime,
+      totalHours: totalHours,
+      isRegularized: isChecked ? 1 : 0,
+    };
 
+    try {
       setIsModalLoading(true);
       const createNewAttendance =
         token &&
@@ -288,11 +304,11 @@ const AllAttendance = ({navigation}) => {
   const keyExtractor = item => item.employeeId.toString();
 
   const handleConfirmDate = date => {
-    if (employeeWeekOffs?.includes(date.getDay())) {
-      alert('You already have a weekend holiday on this day.');
-      setDatePickerVisible(false);
-      return;
-    }
+    // if (employeeWeekOffs?.includes(date.getDay())) {
+    //   alert('You already have a weekend holiday on this day.');
+    //   setDatePickerVisible(false);
+    //   return;
+    // }
 
     for (let i = 0; i < holidayData.length; i++) {
       const holidayObj = new Date(holidayData[i].holidayDate);
@@ -489,6 +505,7 @@ const AllAttendance = ({navigation}) => {
                 <Text style={styles.headerText}>Attendance Date:</Text>
                 <DateTimePickerModal
                   // date={new Date()}
+                  maximumDate={new Date()}
                   isVisible={datePickerVisible}
                   mode="date"
                   onConfirm={handleConfirmDate}

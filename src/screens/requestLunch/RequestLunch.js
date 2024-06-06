@@ -31,6 +31,8 @@ import CalenderIcon from 'assets/newDashboardIcons/calendar-day.svg';
 import TrashIcon from 'assets/newDashboardIcons/trash-can.svg';
 import Loader from 'component/loader/Loader';
 import {getDaysInMonth} from 'utils/utils';
+const START_DATE = 'Start Date';
+const END_DATE = 'End Date';
 
 const RequestLunch = ({navigation}) => {
   const token = useSelector(state => state.auth.userToken);
@@ -45,10 +47,10 @@ const RequestLunch = ({navigation}) => {
   const employeeID = decoded?.id;
 
   const [startDate, setStartDate] = useState({
-    startDateStr: 'Select Start Date',
+    startDateStr: START_DATE,
   });
 
-  const [endDate, setEndDate] = useState({endDateStr: 'Select End Date'});
+  const [endDate, setEndDate] = useState({endDateStr: END_DATE});
   const [startDatePickerVisible, setStartDatePickerVisible] = useState(false);
   const [endDatePickerVisible, setEndDatePickerVisible] = useState(false);
 
@@ -130,8 +132,8 @@ const RequestLunch = ({navigation}) => {
       setStartSelected(true);
       setEndSelected(true);
     } else if (item.value === 'duration') {
-      setStartDate({startDateStr: 'Select Start Date', startDateObj: {}});
-      setEndDate({endDateStr: 'Select End Date', endDateObj: {}});
+      setStartDate({startDateStr: START_DATE, startDateObj: {}});
+      setEndDate({endDateStr: END_DATE, endDateObj: {}});
       setStartSelected(false);
       setEndSelected(false);
     } else {
@@ -196,7 +198,7 @@ const RequestLunch = ({navigation}) => {
       startDateObj: date,
     });
     setStartSelected(true);
-    setEndDate({endDateStr: 'Select End Date'});
+    setEndDate({endDateStr: END_DATE});
     setEndSelected(false);
     // setEndSelected(true);
     // setEndDate({endDateStr: 'Select End Date'});
@@ -340,8 +342,8 @@ const RequestLunch = ({navigation}) => {
       alert('Something Went Wrong.');
     } finally {
       setIsLoading(false);
-      setStartDate({startDateStr: 'Select Start Date'});
-      setEndDate({endDateStr: 'Select End Date'});
+      setStartDate({startDateStr: START_DATE});
+      setEndDate({endDateStr: END_DATE});
       setStartSelected(false);
       setEndSelected(false);
       setValue('');
@@ -509,10 +511,10 @@ const RequestLunch = ({navigation}) => {
               setEndSelected(false);
               setStartSelected(false);
               setStartDate({
-                startDateStr: 'Select Start Date',
+                startDateStr: START_DATE,
               });
 
-              setEndDate({endDateStr: 'Select End Date'});
+              setEndDate({endDateStr: END_DATE});
               setValue(null);
               refAnimationSuccess.current?.resetSelected(false);
             }}

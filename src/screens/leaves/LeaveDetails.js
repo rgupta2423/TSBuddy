@@ -19,14 +19,9 @@ const LeaveDetails = ({route, navigation}) => {
 
   const {params: data} = route;
 
-  const {
-    firstName,
-    middleName,
-    lastName,
-    // leaveApproverFirstName,
-    // leaveApproverMiddleName,
-    // leaveApproverLastName,
-  } = route.params;
+  const firstName = route.params?.firstName;
+  const middleName = route.params?.middleName;
+  const lastName = route.params?.lastName;
 
   const empFullName =
     firstName && middleName && lastName
@@ -47,14 +42,14 @@ const LeaveDetails = ({route, navigation}) => {
   //     : leaveApproverFirstName;
 
   const applyingDate = `${new Date(data?.postingDate).getDate()}-${new Date(
-    data.postingDate,
+    data?.postingDate,
   ).toLocaleString('default', {month: 'short'})}-${new Date(
-    data.fromDate,
+    data?.fromDate,
   ).getFullYear()}`;
 
   const rangeOfdate = item =>
     `${new Date(item.fromDate).getDate()}-${new Date(
-      item.fromDate,
+      item?.fromDate,
     ).toLocaleString('default', {month: 'short'})}-${new Date(
       item.fromDate,
     ).getFullYear()} to ${new Date(item.toDate).getDate()}-${new Date(
@@ -82,7 +77,7 @@ const LeaveDetails = ({route, navigation}) => {
         title="Leave Details"
         navigation={navigation}
         isHome={false}
-        showHeaderRight={true}
+        showHeaderRight={false}
       />
       <View style={styles.mainContainer}>
         <View style={styles.header}>

@@ -1,12 +1,20 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import CustomHeader from 'navigation/CustomHeader';
 import WebView from 'react-native-webview';
 const PoliciesDetails = ({navigation, route}) => {
+  const [policiesData, setPoliciesData] = useState('');
   const policy = route.params;
 
   const source = {
-    html: policy,
+    html: policiesData,
   };
+
+  useEffect(() => {
+    if (policy) {
+      setPoliciesData(policy);
+    }
+  }, [policy]);
+
   return (
     <>
       <CustomHeader

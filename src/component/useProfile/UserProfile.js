@@ -225,11 +225,7 @@ const UserProfile = ({route}) => {
                   {/* <Image source={{uri: imageURL}} style={styles.image} /> */}
 
                   {image ? (
-                    <Image
-                      resizeMode="stretch"
-                      source={{uri: image}}
-                      style={styles.image}
-                    />
+                    <Image source={{uri: image}} style={styles.image} />
                   ) : (
                     <Image source={defaultUserIcon} style={styles.image} />
                   )}
