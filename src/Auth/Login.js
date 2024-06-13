@@ -21,10 +21,14 @@ import LoginVideo from '../assets/video/backgoundVideo.mp4';
 import Video from 'react-native-video';
 import LoginUnCheck from 'assets/mipmap/loginUncheck.imageset/uncheck.png';
 import LoginCheck from 'assets/mipmap/loginCheck.imageset/check.png';
-import {guestLoginStatus} from './LoginSlice';
+// import {guestLoginStatus} from './LoginSlice';
 import {getUserToken, setIsRemeber, setBiometricEnable} from './LoginSlice';
 import {useSelector} from 'react-redux';
-import {COPY_RIGHT, GUEST_LOGIN, REMEMBER_ME} from 'utils/string';
+import {
+  COPY_RIGHT,
+  //  GUEST_LOGIN,
+  REMEMBER_ME,
+} from 'utils/string';
 import Loader from 'component/loader/Loader';
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
@@ -33,7 +37,7 @@ const Login = ({navigation}) => {
   // const [showBiomatricModal, setshowBiomatricModal] = useState(true);
   const [isLoading, setLoading] = useState(false);
 
-  const [username, setUserName] = useState('joshi.vithika@thinksys.com');
+  const [username, setUserName] = useState('gupta.utkarsh@thinksys.com');
   const [password, setPassword] = useState('Thinksys@123');
   const [error, setError] = useState(null);
 
@@ -47,7 +51,7 @@ const Login = ({navigation}) => {
 
   // const enableTouchId = () => {
   //   const optionalConfigObject = {
-  //     title: 'Authentication Required',
+  //    title: 'Authentication Required',
   //     imageColor: Colors.lightBlue,
   //     imageErrorColor: Colors.red,
   //     sensorDescription: 'Touch sensor',

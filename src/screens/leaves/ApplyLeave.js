@@ -81,6 +81,8 @@ const earnedLeave = 'Earned Leave';
 
 const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
   const isApplyingLeave = route?.params?.applyLeave;
+  const hasToPop = route?.params?.hasToPop;
+
   const {
     employeeShift: employeeShiftDataObj,
     leavesData,
@@ -154,10 +156,15 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
     leaveMenuDetails.remainingLeaves || [],
   );
 
-  const leaveTypesItems = allRemainingLeaves.map(leave => ({
+  let leaveTypesItems = allRemainingLeaves.map(leave => ({
     value: leave.leaveType,
     label: leave.leaveType,
   }));
+
+  leaveTypesItems = leaveTypesItems.filter(
+    (item, index, self) =>
+      index === self.findIndex(obj => obj.value === item.value),
+  );
 
   const [fromCalenderVisible, setFromCalenderVisible] = useState(false);
   const [toCalenderVisible, setToCalenderVisible] = useState(false);
@@ -349,6 +356,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
 
   const showFromDatePicker = () => {
     if (!isEditOpenleave && fromOpenLeave) {
+      return;
     } else {
       setFromCalenderVisible(true);
     }
@@ -938,8 +946,8 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
     }
   };
 
-  const dateAfter6Months = new Date();
-  dateAfter6Months.setMonth(new Date().getMonth() + 6);
+  const dateAfter6MonthsFromCurrentDate = new Date();
+  dateAfter6MonthsFromCurrentDate.setMonth(new Date().getMonth() + 6);
 
   const minimumDateLeaveApplication = new Date();
 
@@ -975,6 +983,11 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
       zIndex: 9999,
     };
   }
+
+  let newDate = new Date(fromDate?.fromDateObj);
+
+  // Add 180 days to the new date
+  newDate.setDate(newDate.getDate() + 179);
   // const Component = openResourcePicker ? View : ScrollView;
   return (
     // <KeyboardAvoidingView behavior="height" style={styles.mainContainer}>
@@ -998,7 +1011,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
         navigation={navigation}
         isHome={false}
         showHeaderRight={false}
-        hasToPop={true}
+        hasToPop={hasToPop}
       />
       <SafeAreaView style={styles.mainBottomContainer}>
         <View style={styles.swiperContainer}>{leaveSlider}</View>
@@ -1189,7 +1202,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
                 <DateTimePickerModal
                   minimumDate={minimumDateLeaveApplication}
                   date={fromDate?.fromDateObj}
-                  maximumDate={dateAfter6Months}
+                  maximumDate={dateAfter6MonthsFromCurrentDate}
                   isVisible={fromCalenderVisible}
                   mode="date"
                   onConfirm={fromCalenderConfirm}
@@ -1198,7 +1211,7 @@ const ApplyLeave = ({navigation, route = {}, fromApproverEnd = false}) => {
                 <DateTimePickerModal
                   minimumDate={fromDate?.fromDateObj}
                   date={fromDate?.fromDateObj}
-                  maximumDate={dateAfter6Months}
+                  maximumDate={newDate}
                   isVisible={toCalenderVisible}
                   mode="date"
                   onConfirm={toCalenderConfirm}

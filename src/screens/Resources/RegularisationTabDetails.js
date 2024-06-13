@@ -1,11 +1,8 @@
 import {View, Text, TouchableOpacity, Alert} from 'react-native';
 import styles from './RegularisationTabDetailsStyle';
-import {memo, useEffect, useState} from 'react';
+import React, {memo} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  getEmployeeRegularizationRequest,
-  updateAttRegularizeStatus,
-} from 'redux/homeSlice';
+import {updateAttRegularizeStatus} from 'redux/homeSlice';
 import {heightPercentageToDP} from 'utils/Responsive';
 import {Colors} from 'colors/Colors';
 import CustomHeader from 'navigation/CustomHeader';
@@ -105,30 +102,30 @@ const RegularisationTabDetails = ({navigation, route}) => {
     }
   };
 
-  const handleDismiss = async () => {
-    const updateAttRegularize = await dispatch({
-      token,
-      body: {
-        regularizationId: regularizationId,
-        attendanceDate: attendanceDate,
-        employeeId: employeeId,
-        status: 'Dismissed',
-        attendanceType: attendanceType,
-      },
-    });
-    if (updateAttRegularize?.error) {
-      alert(updateAttRegularize.error.message);
-    } else {
-      Alert.alert('Success', 'Updated successfully!', [
-        {
-          text: 'Ok',
-          onPress: () => {
-            navigation.goBack();
-          },
-        },
-      ]);
-    }
-  };
+  // const handleDismiss = async () => {
+  //   const updateAttRegularize = await dispatch({
+  //     token,
+  //     body: {
+  //       regularizationId: regularizationId,
+  //       attendanceDate: attendanceDate,
+  //       employeeId: employeeId,
+  //       status: 'Dismissed',
+  //       attendanceType: attendanceType,
+  //     },
+  //   });
+  //   if (updateAttRegularize?.error) {
+  //     alert(updateAttRegularize.error.message);
+  //   } else {
+  //     Alert.alert('Success', 'Updated successfully!', [
+  //       {
+  //         text: 'Ok',
+  //         onPress: () => {
+  //           navigation.goBack();
+  //         },
+  //       },
+  //     ]);
+  //   }
+  // };
 
   const attDate = `${new Date(attendanceDate).toLocaleDateString()}`;
   const details = [
@@ -199,7 +196,7 @@ const RegularisationTabDetails = ({navigation, route}) => {
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{alignItems: 'center'}}
             onPress={handleDismiss}>
             <View
@@ -216,7 +213,7 @@ const RegularisationTabDetails = ({navigation, route}) => {
                 Dismiss
               </Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       )}
     </>

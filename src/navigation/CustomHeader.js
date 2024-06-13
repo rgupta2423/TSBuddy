@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import MenuSVG from 'assets/newDashboardIcons/bars-sort.svg';
 import {MonthImages} from 'assets/monthImage/MonthImage';
-import {useRoute, CommonActions} from '@react-navigation/native';
+import {useRoute, CommonActions, StackActions} from '@react-navigation/native';
 import {employeeProfileScreen} from 'navigation/Route';
 import AppIcon from 'assets/mipmap/appIcon120-1.png';
 import SearchIcon from 'assets/newDashboardIcons/user-magnifying-glass.svg';
@@ -51,7 +51,18 @@ const CustomHeader = function ({
       ) : (
         <Pressable
           onPress={() => {
-            navigation.goBack();
+            // navigation.goBack();
+            if (hasToPop) {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{name: 'Home'}],
+                }),
+              );
+            } else {
+              navigation.goBack();
+            }
+            // navigation.navigate('CalendarMain');
           }}>
           <Image source={MonthImages.backArrowS} style={styles.backArrowIcon} />
         </Pressable>

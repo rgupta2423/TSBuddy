@@ -264,6 +264,7 @@ const AllocateLeave = ({navigation}) => {
   };
 
   const toConfirmHandler = date => {
+    // console.log('date:To:', date.toLocaleString('en-CA'));
     const dateStr = getDateStringFromDateObject(date);
     setToDate({dateStr, dateObj: date});
     hideDatePicker(setToDatePickerVisible);

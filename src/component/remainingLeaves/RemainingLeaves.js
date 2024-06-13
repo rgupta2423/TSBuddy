@@ -16,12 +16,16 @@ const RemainingLeaves = () => {
     state => state.home,
   );
 
+  const restrictedLeaves = remainingLeaves.find(
+    leave => leave.leaveType === 'Restricted Holiday',
+  );
+
   const {leavesData} = useSelector(state => state.home);
 
   const restrictedLeavesData = [
-    isGuestLogin ? 1 : remainingLeaves[1]?.totalLeavesAllocated,
-    isGuestLogin ? 0 : remainingLeaves[1]?.currentLeaveApplied,
-    isGuestLogin ? 1 : remainingLeaves[1]?.currentLeaveBalance,
+    isGuestLogin ? 1 : restrictedLeaves?.totalLeavesAllocated || 0,
+    isGuestLogin ? 0 : restrictedLeaves?.currentLeaveApplied || 0,
+    isGuestLogin ? 1 : restrictedLeaves?.currentLeaveBalance || 0,
   ];
 
   const earnedLeavesData = [
@@ -107,67 +111,21 @@ const RemainingLeaves = () => {
                 }
               }
 
-              ////////////////////////////////////////////////////////////////
-
-              // navigation.navigate('Calendar', {
-              //   screen: LeavesSeparate,
-              //   initial: false,
-              //   params: {
-              //     // screen: LeavesSeparate,
-              //     params: {
-              //       // screen: LeaveApplyScreen,
-              //       leavesData,
-              //       openLeavesCount: openLeaves,
-              //       applyLeave: true,
-              //     },
-              //   },
-              // });
-              // navigation.navigate('Calendar', {
-              //   screen: 'CalendarMain',
-              //   params: {
-              //     screen: LeavesSeparate,
-              //     params: {
-              //       screen: LeaveApplyScreen,
-              //       params: {
-              //         leavesData,
-              //         openLeavesCount: openLeaves,
-              //         applyLeave: true,
-              //       },
-              //     },
-              //   },
-              // });
-              navigation.navigate('Calendar');
-              // ====
-              // navigation.navigate('CalendarMain', {
-              //   screen: LeavesSeparate,
-              //   params: {
-              //     screen: LeaveApplyScreen,
-              //     params: {
-              //       leavesData,
-              //       openLeavesCount: openLeaves,
-              //       applyLeave: true,
-              //     },
-              //   },
-              // });
-              // ===
-              // navigation.navigate('CalendarMain', {
-              //   screen: LeavesSeparate,
-              //   leavesData,
-              //   openLeavesCount: openLeaves,
-              //   applyLeave: true,
-              // });
-
-              // navigation.navigate('CalendarMain', {
-              //   screen: 'LeavesSeparate',
-              //   params: {
-              //     screen: 'LeaveApplyScreen',
-              //     params: {
-              //       leavesData,
-              //       openLeavesCount: openLeaves,
-              //       applyLeave: true,
-              //     },
-              //   },
-              // });
+              navigation.navigate('Calendar', {
+                screen: 'CalendarMain',
+                params: {
+                  screen: LeavesSeparate,
+                  params: {
+                    screen: LeaveApplyScreen,
+                    params: {
+                      leavesData,
+                      openLeavesCount: openLeaves,
+                      applyLeave: true,
+                      hasToPop: true,
+                    },
+                  },
+                },
+              });
             }}
             style={styles.buttonContainer}>
             <Text style={styles.buttonText}>Apply</Text>
@@ -208,10 +166,6 @@ const RemainingLeaves = () => {
               <View style={styles.leavesType3} />
               <Text>+ve Balance</Text>
             </View>
-            {/* <View style={styles.leaveType}>
-              <View style={styles.leavesType4}></View>
-              <Text>-ve Balance</Text>
-            </View> */}
           </View>
         </View>
       )}
@@ -219,82 +173,4 @@ const RemainingLeaves = () => {
   );
 };
 
-// const renderItem = ({item}) => {
-//   return (
-//     <>
-//       <View
-//         style={{
-//           height: hp(1.2),
-//           width: wp(2.8),
-//           marginTop: hp(0.5),
-//           marginHorizontal: wp(1.5),
-//           backgroundColor:
-//             item.text === 'Allocate'
-//               ? Colors.orange
-//               : item.text === 'Taken'
-//               ? Colors.darkBlue
-//               : item.text === '-ve Balance'
-//               ? Colors.red
-//               : Colors.green,
-//         }}></View>
-//       <Text
-//         style={{
-//           color:
-//             item.text === 'Allocate'
-//               ? Colors.orange
-//               : item.text === 'Taken'
-//               ? Colors.darkBlue
-//               : item.text === '-ve Balance'
-//               ? Colors.red
-//               : Colors.green,
-//         }}>
-//         {item.text}
-//       </Text>
-//     </>
-//   );
-// };
 export default RemainingLeaves;
-
-// import React from 'react';
-// export default () => {
-//   const layout = {
-//     xaxis: {
-//       type: 'category',
-//       title: 'Earned Leave',
-//       showticklabels: false,
-//       fixedrange: true,
-//     },
-//     yaxis: {
-//       linecolor: '#636363',
-//       showgrid: false,
-//       zeroline: false,
-//       showline: true,
-//       fixedrange: true,
-//     },
-//   };
-//   var trace1 = {
-//     type: 'bar',
-//     x: [1, 2, 3, 4, 7],
-//     y: [5, 10, 2, 5, 8],
-//     marker: {
-//       color: '#C8A2C8',
-//       line: {
-//         width: 2.5,
-//       },
-//       height: 200,
-//     },
-//   };
-//   var data = [trace1];
-//   return (
-//     <Plotly
-//       data={data}
-//       config={{
-//         dragMode: false,
-//         scrollZoom: false,
-//         displayModeBar: false,
-//       }}
-//       enableFullPlotly={true}
-//       layout={layout}
-//     />
-//   );
-// };

@@ -9,6 +9,7 @@ import {MonthImages} from 'assets/monthImage/MonthImage';
 import {logOut} from 'Auth/LoginSlice';
 import {homeReset} from 'redux/homeSlice';
 import styles from './DrawerStyles';
+import {LeavesSeparate} from './Route';
 
 export default ({navigation}) => {
   const {userToken: token} = useSelector(state => state.auth);
@@ -209,6 +210,7 @@ const renderDrawerItem = (
           );
           navigation.closeDrawer();
         } else {
+          console.log('navigation====', navigation);
           navigation.navigate(screen);
           navigation.closeDrawer();
         }
