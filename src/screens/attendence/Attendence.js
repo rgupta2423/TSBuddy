@@ -175,7 +175,6 @@ const Attendence = ({navigation}) => {
     privMonDAy.setDate(privMonDAy.getDate() - ((privMonDAy.getDay() + 6) % 7));
     var now = new Date();
     const todayDateIndex = now.getDay();
-    // console.log('todayDateIndex:', todayDateIndex);
     const todayDate = now.getDate();
 
     let weekDays = [];
